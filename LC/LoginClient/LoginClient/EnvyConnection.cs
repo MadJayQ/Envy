@@ -15,6 +15,7 @@ namespace LoginClient
         private TcpClient internalSocket;
         private String targetHost;
         private int targetPort;
+        private bool internalConnected;
         public EnvyConnection(String hostname, String port)
         {
             targetHost = hostname;
@@ -24,6 +25,27 @@ namespace LoginClient
         {
             targetHost = hostname;
             targetPort = port;
+        }
+
+        public bool Connected
+        {
+            get
+            {
+                return internalSocket.Connected;
+            }
+            set
+            {
+                if(internalSocket.Connected && !value)
+                {
+                    internalSocket.Close();
+                }
+                else if(!internalSocket.Connected && value)
+                {
+                    internalSocket.Connect(targetHost, targetPort);
+                }
+
+                internalConnected = value;
+            }
         }
 
         public int Port

@@ -25,4 +25,10 @@ public abstract class EnvyProtocol {
     public int port() { return this.PORT_NUMBER; }
     
     public abstract EnvyNetMessage processInput(String input);
+    
+    public EnvyNetMessage requestTerminate() {
+        EnvyNetMessage.Builder messageBuilder = EnvyNetMessage.newBuilder();
+        messageBuilder.setType(EnvyNetMessage.NetMessageType.NET_CLOSE_CONNECTION);
+        return messageBuilder.build();
+    }
 }

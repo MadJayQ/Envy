@@ -7,6 +7,7 @@ package envyfileserver.net;
 
 import com.google.protobuf.ByteString;
 import envyfileserver.LoginServerCore;
+import envyfileserver.login.DBManager;
 import envyfileserver.net.EnvyNetMessageProtos.*;
 
 import envyfileserver.net.EnvyNetMessageProtos.EnvyNetMessage;
@@ -62,7 +63,7 @@ public class EnvyAP extends EnvyProtocol {
     @Override
     public EnvyNetMessage processInput(String input) {
         EnvyNetMessage.Builder messageBuilder = EnvyNetMessage.newBuilder();
-        switch(this.currentState) {
+        switch (this.currentState) {
             case 0: {
                 //ret = new EnvyNetMessage(EnvyNetMessage.NetMessageType.NET_OPEN_CONNECTION);
                 messageBuilder.setType(EnvyNetMessage.NetMessageType.NET_OPEN_CONNECTION);
@@ -79,12 +80,20 @@ public class EnvyAP extends EnvyProtocol {
                 //ret = new EnvyNetMessage(EnvyNetMessage.NetMessageType.NET_AUTH_RESPONSE);
                 messageBuilder.setType(EnvyNetMessage.NetMessageType.NET_AUTH_RESPONSE);
                 System.out.println("User is attempting to authenticate with information:" + input);
-                byte[] data = ("Welcome to envycheat.cc").getBytes();
-                messageBuilder.setData(ByteString.copyFrom(data));
-                messageBuilder.setDataSize(data.length);
+                String info[] = input.split(":");
+                User user = new User(info[0], info[1]);
+                if(user.authenticate(LoginServerCore.dbFileName)) {
+                    byte[] data = (user.handle() + ":" + user.role()).getBytes();
+                    messageBuilder.setData(ByteString.copyFrom(data));
+                    messageBuilder.setDataSize(data.length);
+                    break;
+                }
+                messageBuilder.setDataSize(-1);
+                killConnection = true;
                 break;
             }
-            default: break;
+            default:
+                break;
         }
         return messageBuilder.build();
     }

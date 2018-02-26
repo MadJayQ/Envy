@@ -15,6 +15,8 @@ namespace LoginClient
         public Form1()
         {
             InitializeComponent();
+            Console.WriteLine(System.IO.Directory.GetCurrentDirectory());
+            pictureBox1.Image = Image.FromFile("Assets/Envy_Logo_LC.png");
         }
 
         private void btnLogin_Click(object sender, EventArgs e)
@@ -30,6 +32,15 @@ namespace LoginClient
                 var ap = new EnvyClientAuthProtocol(conn);
                 ap.AuthenticateUser(user);
             }
+        }
+
+        private void tbUsr_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
         }
     }
 }

@@ -9,3 +9,15 @@ D:\Envy\LC\LoginClient\LoginClient\obj\Debug\LoginClient.exe
 D:\Envy\LC\LoginClient\LoginClient\obj\Debug\LoginClient.pdb
 D:\Envy\LC\LoginClient\LoginClient\bin\Debug\Google.Protobuf.dll
 D:\Envy\LC\LoginClient\LoginClient\bin\Debug\Google.Protobuf.xml
+F:\Programming\Envy\LC\LoginClient\LoginClient\bin\Debug\LoginClient.exe.config
+F:\Programming\Envy\LC\LoginClient\LoginClient\bin\Debug\LoginClient.exe
+F:\Programming\Envy\LC\LoginClient\LoginClient\bin\Debug\LoginClient.pdb
+F:\Programming\Envy\LC\LoginClient\LoginClient\bin\Debug\Google.Protobuf.dll
+F:\Programming\Envy\LC\LoginClient\LoginClient\bin\Debug\Google.Protobuf.xml
+F:\Programming\Envy\LC\LoginClient\LoginClient\obj\Debug\LoginClient.csprojResolveAssemblyReference.cache
+F:\Programming\Envy\LC\LoginClient\LoginClient\obj\Debug\LoginClient.Form1.resources
+F:\Programming\Envy\LC\LoginClient\LoginClient\obj\Debug\LoginClient.Properties.Resources.resources
+F:\Programming\Envy\LC\LoginClient\LoginClient\obj\Debug\LoginClient.csproj.GenerateResource.Cache
+F:\Programming\Envy\LC\LoginClient\LoginClient\obj\Debug\LoginClient.csproj.CoreCompileInputs.cache
+F:\Programming\Envy\LC\LoginClient\LoginClient\obj\Debug\LoginClient.exe
+F:\Programming\Envy\LC\LoginClient\LoginClient\obj\Debug\LoginClient.pdb

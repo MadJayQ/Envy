@@ -39,10 +39,11 @@ public class EnvyFTPServer {
 
         void WriteData(DataOutputStream out, EnvyNetMessage msg, boolean verbose) throws IOException {
             msg.writeTo(out);
-            if(verbose) {
+            out.writeByte('\n');
+            if (verbose) {
                 System.out.print("Sending: ");
                 byte[] dat = msg.toByteArray();
-                for(int i = 0; i < dat.length; i++) {
+                for (int i = 0; i < dat.length; i++) {
                     System.out.print(dat[i] + " ");
                 }
                 System.out.println("to " + this.socket.getInetAddress().getHostAddress());
@@ -61,7 +62,7 @@ public class EnvyFTPServer {
                 }
                 System.out.println("to " + this.socket.getInetAddress().getHostAddress());
             }
-            */
+             */
         }
 
         @Override
@@ -76,9 +77,12 @@ public class EnvyFTPServer {
                 while ((input = in.readLine()) != null) {
                     System.out.println("RECEIVED: " + input);
                     toWrite = currentProtocol.processInput(input);
-                    WriteData(out, toWrite, true);
                     if (this.currentProtocol.shouldTerminate()) {
+                        WriteData(out, toWrite, true);
+                        WriteData(out, currentProtocol.requestTerminate(), true);
                         break;
+                    } else {
+                        WriteData(out, toWrite, true);
                     }
                 }
             } catch (IOException ex) {
