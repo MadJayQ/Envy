@@ -52,7 +52,8 @@ namespace LoginClient
         {
             EnvyNetMessage[] ret;
             byte[] rawdata = activeConnection.ConsumeNetworkStream();
-            byte[][] data = Separate(rawdata, Encoding.ASCII.GetBytes("\n"));
+            byte[] sep = { 4 };
+            byte[][] data = Separate(rawdata, sep);
             int bufferSize = 0;
             for (int i = 0; i < data.Length; i++) if (data[i].Length > 0) bufferSize++;
             ret = new EnvyNetMessage[bufferSize];
@@ -64,7 +65,7 @@ namespace LoginClient
             return ret;
         }
 
-        public void AuthenticateUser(EnvyUser user)
+        public bool AuthenticateUser(EnvyUser user)
         {
             while(!terminate)
             {
@@ -90,12 +91,14 @@ namespace LoginClient
                                 if (msg.DataSize == -1)
                                 {
                                     Console.WriteLine("INVALID LOGIN");
+                                    return false;
                                 }
                                 else
                                 {
                                     String response = msg.Data.ToStringUtf8();
                                     var info = response.Split(':');
                                     Console.WriteLine("Welcome: " + info[0] + " you are an " + info[1]);
+                                    return true;
                                 }
                                 break;
                             }
@@ -107,6 +110,7 @@ namespace LoginClient
                     }
                 }
             }
+            return false;
         }
     }
 }
