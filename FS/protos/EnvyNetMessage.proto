@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package envyfileserver.net;
+
+option java_package = "src.envyfileserver.net";
+option java_outer_classname = "EnvyNetMessageProtos";
+option csharp_namespace = "EnvyFileServer.Net.EnvyNetMessage";
+
+message EnvyNetMessage {
+    enum NetMessageType {
+        NET_OPEN_CONNECTION = 0;
+        NET_CLOSE_CONNECTION = 1;
+        NET_AUTH_MESSAGE = 2;
+        NET_AUTH_RESPONSE = 3;
+    }
+
+    bytes data = 1;
+    int32 dataSize = 2;
+    NetMessageType type = 3;
+}
