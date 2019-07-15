@@ -1,5 +1,6 @@
 #pragma once
 #include <limits>
+
 namespace Envy
 {
 	namespace SourceEngine
@@ -30,7 +31,7 @@ namespace Envy
 			}
 			bool IsValid() const
 			{
-				return std::isfinite(x) && std::isfinite(y) && std::isfinite(z);
+				return isfinite(x) && isfinite(y) && isfinite(z);
 			}
 			void Invalidate()
 			{
@@ -202,7 +203,7 @@ namespace Envy
 				return Vector(x / v.x, y / v.y, z / v.z);
 			}
 
-			float x, y, z;
+			float x; float y; float z;
 		};
 
 		inline Vector operator*(float lhs, const Vector& rhs)

@@ -5,6 +5,7 @@
 #include "address.h"
 #include <map>
 
+#define FROMVMT(object, index) VMTManager::Instance()->GetVMTFunction((uintptr_t)object, index)
 
 class VMTManager : public Singleton<VMTManager>
 {

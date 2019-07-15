@@ -28,7 +28,7 @@ namespace Envy
 		virtual Interface* Init() override
 		{
 			m_data = **reinterpret_cast<Interface***>(
-				Peb::Instance()->GetModule("client.dll").FindPattern(GameRulesSig) + 2
+				Peb::Instance()->GetModule("client_panorama.dll").FindPattern(GameRulesSig) + 2
 			);
 
 			SourceInterface<SourceEngine::_CGameRules_>::Init();

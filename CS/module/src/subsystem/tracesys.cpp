@@ -49,6 +49,21 @@ namespace Envy
 		return (trace.fraction >= tolerance);
 	}
 
+	static uintptr_t clptrtp = (uintptr_t)Peb::Instance()->GetModule("client_panorama.dll").FindPattern("53 8B DC 83 EC 08 83 E4 F0 83 C4 04 55 8B 6B 04 89 6C 24 04 8B EC 81 EC ? ? ? ? 0F 57 C9");
+	static _declspec(naked) void UTIL_ClipTraceToPlayers(const Vector& vecAbsStart, const Vector& vecAbsEnd, unsigned int mask, ITraceFilter* filter, trace_t* tr)
+	{
+		__asm
+		{
+			push tr
+			push filter
+			push mask
+			lea edx, vecAbsEnd
+			lea ecx, vecAbsStart
+			call clptrtp
+			add esp, 0xC
+		}
+	}
+
 	void TraceSubsystem::GetPointDamage(C_BasePlayer* player, Vector& start, Vector& end, float& finaldmg)
 	{
 
@@ -58,21 +73,6 @@ namespace Envy
 			ray.Init(vecAbsStart, vecAbsEnd);
 			CTraceFilterSkipTwoEntities traceFilter(ignore, ignore2, collisiongroup);
 			(*Interfaces::Instance()->GetInterface<IEngineTrace>())->TraceRay(ray, mask, &traceFilter, ptr);
-		};
-
-		static auto UTIL_ClipTraceToPlayers = [](const Vector& vecAbsStart, const Vector& vecAbsEnd, unsigned int mask, ITraceFilter* filter, trace_t* tr) 
-		{
-			static uintptr_t clptrtp = (uintptr_t)Peb::Instance()->GetModule("client.dll").FindPattern("53 8B DC 83 EC ? 83 E4 ? 83 C4 ? 55 8B 6B 04 89 6C 24 ? 8B EC 81 EC ? ? ? ? 8B 43 10 56 57 52 F3 0F 10 40");
-			__asm 
-			{
-				push tr
-				push filter
-				push mask
-				lea edx, vecAbsEnd
-				lea ecx, vecAbsStart
-				call clptrtp
-				add esp, 0xC
-			}
 		};
 
 		auto weapon = player->m_hActiveWeapon().Get();
@@ -163,7 +163,7 @@ namespace Envy
 		assert(m_pCustomTracePlayer == nullptr); //Mismatched Begin/End calls
 		assert(m_pBoneCache == nullptr);
 
-		static auto g_iModelBoneCounterPtr = (uintptr_t)(Peb::Instance()->GetModule("client.dll").FindPattern("3B 05 ? ? ? ? 0F 84 ? ? ? ? 8B 35") + 0x2);
+		static auto g_iModelBoneCounterPtr = (uintptr_t)(Peb::Instance()->GetModule("client_panorama.dll").FindPattern("3B 05 ? ? ? ? 0F 84 ? ? ? ? 8B 35") + 0x2);
 		m_pCustomTracePlayer = player;
 
 		int g_iModelBoneCounter = **(int**)g_iModelBoneCounterPtr;

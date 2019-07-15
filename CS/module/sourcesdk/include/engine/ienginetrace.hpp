@@ -216,6 +216,7 @@ namespace Envy
 			CTraceFilterPlayersOnlySkipOne(IClientEntity* ent)
 			{
 				pEnt = ent;
+				pSkip = ent;
 			}
 			bool ShouldHitEntity(IHandleEntity* pEntityHandle, int /*contentsMask*/)
 			{

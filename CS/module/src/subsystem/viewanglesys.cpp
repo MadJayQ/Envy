@@ -16,13 +16,14 @@ namespace Envy
 	{
 		m_Aimbot = std::make_unique<Aimbot>();
 		m_AntiAim = std::make_unique<AntiAim>();
+		m_Triggerbot = std::make_unique<Triggerbot>();
 	}
 
 	struct BoneAccessor
 	{
-		const void *m_pAnimating;
+		const void* m_pAnimating;
 
-		matrix3x4_t *m_pBones;
+		matrix3x4_t* m_pBones;
 
 		int m_ReadableBones;		// Which bones can be read.
 		int m_WritableBones;		// Which bones can be written.
@@ -68,7 +69,7 @@ namespace Envy
 		float fake = usercmd->viewangles.yaw - 90.f;
 		float real = usercmd->viewangles.yaw + 90.f;
 		float moving = usercmd->viewangles.yaw + 180.f;
-		
+
 
 		bool ismoving = g_LocalPlayer->m_vecVelocity().Length() > 0.1;
 		if (counter < 13)
@@ -104,17 +105,17 @@ namespace Envy
 			counter = 0;
 		}
 #endif
-		float yaw = usercmd->viewangles.yaw;
-		float real = yaw + Options::Instance()->aa_real_offset();
-		float fake = yaw + Options::Instance()->aa_fake_offset();
-		float lby = yaw + Options::Instance()->aa_lby_offset();
+		//float yaw = usercmd->viewangles.yaw;
+		//float real = yaw + Options::Instance()->aa_real_offset();
+		//float fake = yaw + Options::Instance()->aa_fake_offset();
+		//float lby = yaw + Options::Instance()->aa_lby_offset();
 
-		if (lby < -180.f) lby += 360.f;
-		if (lby > 180.f) lby -= 360.f;
-		if (real < -180.f) real += 360.f;
-		if (real > 180.f) real -= 360.f;
-		if (fake < -180.f) fake += 360.f;
-		if (fake > 180.f) fake -= 360.f;
+		//if (lby < -180.f) lby += 360.f;
+		//if (lby > 180.f) lby -= 360.f;
+		//if (real < -180.f) real += 360.f;
+		//if (real > 180.f) real -= 360.f;
+		//if (fake < -180.f) fake += 360.f;
+		//if (fake > 180.f) fake -= 360.f;
 
 
 		auto visualsys = g_Subsystems->Get<VisualSubsystem>();
@@ -135,7 +136,7 @@ namespace Envy
 				if (counter == 0)
 				{
 					float nextturntime = animsys->GetNextTurnTime();//*(float*)((uintptr_t)g_AnimState + 0xFC);
-					visualsys->SetNextTurnTime(nextturntime);	
+					visualsys->SetNextTurnTime(nextturntime);
 					//visualsys->SetLastTurnTime(g_flLastTurnTime);
 					if (g_LocalPlayer->GetPredictionTime() > nextturntime && nextturntime != g_flLastTurnTime)
 					{
@@ -173,13 +174,20 @@ namespace Envy
 			curtime = g_LocalPlayer->GetPredictionTime();
 		}
 #endif
-		if (Options::Instance()->aa_enabled())
+		if (true)
+		{
+			if (m_Triggerbot->ProcessTriggerBot(m_safeAngle, sendpacket))
+			{
+				usercmd->buttons |= IN_ATTACK;
+			}
+		}
+		if (false/*Options::Instance()->aa_enabled()*/)
 		{
 			m_AntiAim->ProcessAntiAim(usercmd, sendpacket, sequence);
 			m_angRenderAngle = m_AntiAim->GetRealAngle();
 
 		}
-		if (Options::Instance()->aimbot_enable())
+		if (false/*Options::Instance()->aimbot_enable()*/)
 		{
 			m_Aimbot->ProcessAimbot(m_safeAngle, sendpacket);
 			if (m_Aimbot->Valid())
@@ -228,9 +236,9 @@ namespace Envy
 	}
 	CACHED int s_lastOutgoing = -1;
 	void ViewangleSubssytem::OnPredictionUpdate(
-		int startframe, 
-		bool validframe, 
-		int incomingack, 
+		int startframe,
+		bool validframe,
+		int incomingack,
 		int outgoingcmd
 	)
 	{

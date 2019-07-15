@@ -9,6 +9,8 @@
 #include "options.hpp"
 #include "thread.h"
 
+#include "subsystem/subsystem.h"
+
 #include <mutex>
 
 using namespace Envy::SourceEngine;
@@ -34,7 +36,7 @@ namespace Envy
 	}
 	Vector Aimbot::GetHitboxPosition(C_BasePlayer* player, int hitbox_num, matrix3x4_t* bones) 
 	{
-		auto studio_model = (*Interfaces::Instance()->GetInterface<IVModelInfoClient>())->GetStudiomodel(player->GetModel());
+		auto studio_model = Interfaces::Instance()->GetInterface<IVModelInfoClient>()->GetStudiomodel(player->GetModel());
 		if (studio_model)
 		{
 			auto hitbox = studio_model->GetHitboxSet(0)->GetHitbox(hitbox_num);
@@ -54,7 +56,7 @@ namespace Envy
 
 	void RenderMultiPoint(C_BasePlayer* player, int hitbox_num, matrix3x4_t* bones, std::vector<Vector>* points)
 	{
-		auto studio_model = (*Interfaces::Instance()->GetInterface<IVModelInfoClient>())->GetStudiomodel(player->GetModel());
+		auto studio_model = Interfaces::Instance()->GetInterface<IVModelInfoClient>()->GetStudiomodel(player->GetModel());
 		auto debug = Interfaces::Instance()->GetInterface<IVDebugOverlay>();
 		if (studio_model)
 		{
@@ -458,6 +460,7 @@ namespace Envy
 			Vector min, max;
 			int correct_tickcount = 0;
 			float simtime = 0.f;
+			
 			g_Subsystems->Get<LagCompensationSubsystem>()->RewindPlayer(player, origin, angles, min, max, simtime, correct_tickcount);
 			if (!g_Subsystems->Get<AnimationSubsystem>()->SetupBones(player, angles, origin, bonematrix.data(), simtime, BONE_USED_BY_ANYTHING))
 				continue;

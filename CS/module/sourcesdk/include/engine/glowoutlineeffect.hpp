@@ -130,7 +130,7 @@ namespace Envy
 		virtual Interface* Init() override
 		{
 			m_data = *reinterpret_cast<Interface**>(
-				Peb::Instance()->GetModule("client.dll").FindPattern("0F 11 05 ? ? ? ? 83 C8 01") + 3
+				Peb::Instance()->GetModule("client_panorama.dll").FindPattern("0F 11 05 ? ? ? ? 83 C8 01") + 3
 			);
 			SourceInterface<SourceEngine::_CGlowObjectManager_>::Init();
 			return m_data;

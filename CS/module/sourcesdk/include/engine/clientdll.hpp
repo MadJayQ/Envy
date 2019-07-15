@@ -32,7 +32,7 @@ namespace Envy
 		virtual Interface* Init() override
 		{
 			m_data = reinterpret_cast<Interface*>(
-				Interfaces::Instance()->GetInterfaceAddr("VClient")
+				Interfaces::Instance()->GetInterfaceAddr("VClient018")
 			);
 			SourceInterface<SourceEngine::_IBaseClientDll_>::Init();
 			return m_data;

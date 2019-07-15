@@ -130,8 +130,8 @@ namespace Envy
 				Interfaces::Instance()->GetInterfaceAddr("VClientPrediction")
 			);
 			SourceInterface<SourceEngine::_IPrediction_>::Init();
-			m_pRandomSeed = *(int**)(Peb::Instance()->GetModule("client.dll").FindPattern("8B 0D ? ? ? ? BA ? ? ? ? E8 ? ? ? ? 83 C4 04") + 0x2);
-			m_pPredictionPlayer = *(int**)(Peb::Instance()->GetModule("client.dll").FindPattern("89 35 ? ? ? ? F3 0F 10 48 20") + 0x2);
+			m_pRandomSeed = *(int**)(Peb::Instance()->GetModule("client_panorama.dll").FindPattern("8B 0D ? ? ? ? BA ? ? ? ? E8 ? ? ? ? 83 C4 04") + 0x2);
+			m_pPredictionPlayer = *(int**)(Peb::Instance()->GetModule("client_panorama.dll").FindPattern("89 35 ? ? ? ? F3 0F 10 48 20") + 0x2);
 			return m_data;
 		}
 

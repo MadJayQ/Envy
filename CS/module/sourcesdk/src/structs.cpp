@@ -9,7 +9,7 @@ namespace Envy
 	{
 		CCSWeaponInfo* C_BaseCombatWeapon::GetCSWeaponData()
 		{
-			static auto client = Peb::Instance()->GetModule("client.dll");
+			static auto client = Peb::Instance()->GetModule("client_panorama.dll");
 			static auto wpnDataFn = reinterpret_cast<CCSWeaponInfo*(__thiscall*)(void*)>(
 				client.FindPattern("55 8B EC 81 EC ? ? ? ? 53 8B D9 56 57 8D 8B")
 			);
@@ -54,7 +54,7 @@ namespace Envy
 		}
 		bool C_BaseCombatWeapon::IsReloading()
 		{
-			static auto client = Peb::Instance()->GetModule("client.dll");
+			static auto client = Peb::Instance()->GetModule("client_panorama.dll");
 			static auto inReload = *(uint32_t*)(client.FindPattern("C6 87 ? ? ? ? ? 8B 06 8B CE FF 90") + 2);
 			return *(bool*)((uintptr_t)this + inReload);
 		}
@@ -77,7 +77,7 @@ namespace Envy
 		CUserCmd *& C_BasePlayer::m_pCurrentCommand()
 		{
 			// TODO: insert return statement here
-			static auto command = *(uint32_t*)(Peb::Instance()->GetModule("client.dll").FindPattern("89 BE ? ? ? ? E8 ? ? ? ? 85 FF") + 2);
+			static auto command = *(uint32_t*)(Peb::Instance()->GetModule("client_panorama.dll").FindPattern("89 BE ? ? ? ? E8 ? ? ? ? 85 FF") + 2);
 			return *(CUserCmd**)((uintptr_t)this + command);
 		}
 		float C_BasePlayer::GetPredictionTime() const
@@ -131,7 +131,7 @@ namespace Envy
 
 		Vector C_BasePlayer::TranslateHitboxPos(int hitbox_id, matrix3x4_t* m)
 		{
-			auto studio_model = (*Interfaces::Instance()->GetInterface<IVModelInfoClient>())->GetStudiomodel(GetModel());
+			auto studio_model = Interfaces::Instance()->GetInterface<IVModelInfoClient>()->GetStudiomodel(GetModel());
 			if (studio_model) 
 			{
 				auto hitbox = studio_model->GetHitboxSet(0)->GetHitbox(hitbox_id);
@@ -155,7 +155,9 @@ namespace Envy
 			matrix3x4_t boneMatrix[MAXSTUDIOBONES];
 
 			if (SetupBones(boneMatrix, MAXSTUDIOBONES, BONE_USED_BY_HITBOX, 0.0f)) {
-				auto studio_model = (*Interfaces::Instance()->GetInterface<IVModelInfoClient>())->GetStudiomodel(GetModel());
+				auto modelInfoClient = Interfaces::Instance()->GetInterface<IVModelInfoClient>();
+				auto model = GetModel();
+				auto studio_model = modelInfoClient->GetStudiomodel(model);
 				if (studio_model) {
 					auto hitbox = studio_model->GetHitboxSet(0)->GetHitbox(hitbox_id);
 					if (hitbox) {
@@ -195,7 +197,7 @@ namespace Envy
 			using SetAbsAngleFn = void(__thiscall*)(void*, const QAngle& angle);
 			static SetAbsAngleFn _SetAbsAngle;
 			if (!_SetAbsAngle)
-				_SetAbsAngle = (SetAbsAngleFn)Peb::Instance()->GetModule("client.dll").FindPattern("83 EC 64 53 56 57 8B F1 E8");
+				_SetAbsAngle = (SetAbsAngleFn)Peb::Instance()->GetModule("client_panorama.dll").FindPattern("83 EC 64 53 56 57 8B F1 E8");
 
 			_SetAbsAngle(this, angle);
 		}
@@ -207,7 +209,7 @@ namespace Envy
 		bool C_BasePlayer::CarryingC4()
 		{
 			static auto hasC4 = reinterpret_cast<bool(__thiscall*)(void*)>(
-				Peb::Instance()->GetModule("client.dll").FindPattern("56 8B F1 85 F6 74 31")
+				Peb::Instance()->GetModule("client_panorama.dll").FindPattern("56 8B F1 85 F6 74 31")
 			);
 			return hasC4(this);
 		}

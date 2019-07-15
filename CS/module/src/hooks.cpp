@@ -14,7 +14,7 @@
 
 using namespace Envy::SourceEngine;
 
-#define FROMVMT(object, index) VMTManager::Instance()->GetVMTFunction((uintptr_t)object, index)
+
 namespace Envy 
 {
 
@@ -28,10 +28,13 @@ namespace Envy
 	Function<void, THISCALL, _IBaseClientDll_*, ClientFrameStage_t> oFrameStageNotify(INVALID);
 	Function<void, THISCALL, _IPrediction_*, int, bool, int, int> oUpdate(INVALID);
 	Function<int, THISCALL, _IClientMode_*, int> oDoPostScreenEffects(INVALID);
+	Function<void, THISCALL, _ISurface_*> oUnlockCursor(INVALID);
+	Function<void, THISCALL, _ISurface_*>oLockCursor(INVALID);
 
 
 	VMT* panel_vmt;
 	VMT* client_vmt;
+	VMT* surface_vmt;
 	VMT* g_pClientPredictionVMT;
 	VMT* g_pClientModeVMT;
 
@@ -269,7 +272,7 @@ namespace Envy
 			{
 				cl_sendmove->assign((uintptr_t)Peb::Instance()->GetModule("engine.dll").FindPattern("55 8B EC A1 ? ? ? ? 81 EC ? ? ? ? B9 ? ? ? ? 53 8B 98"));
 				cl_sendmove_ret = (uintptr_t)Peb::Instance()->GetModule("engine.dll").FindPattern("84 C0 74 04 B0 01 EB 02 32 C0 8B FE");
-				WriteUsercmdLocation = (uintptr_t)Peb::Instance()->GetModule("client.dll").FindPattern("55 8B EC 83 E4 F8 51 53 56 8B D9 8B 0D");
+				WriteUsercmdLocation = (uintptr_t)Peb::Instance()->GetModule("client_panorama.dll").FindPattern("55 8B EC 83 E4 F8 51 53 56 8B D9 8B 0D");
 				oWriteUsercmdDeltaToBuffer->assign(
 					FROMVMT(client, Index::WriteUsercmdDeltaToBuffer)
 				);
@@ -416,10 +419,47 @@ namespace Envy
 			return oFrameStageNotify(client, stage);
 
 		}
+		void ENVY_HOOK hkUnlockCursor(
+			_ISurface_* surface,
+			int edx
+		)
+		{
+			if (oUnlockCursor == INVALID)
+			{
+				oUnlockCursor->assign(
+					FROMVMT(surface, Index::UnlockCursor)
+				);
+			}
+
+			return oUnlockCursor(surface);
+		}
+		void ENVY_HOOK hkLockCursor(
+			_ISurface_* surface,
+			int edx
+		)
+		{
+			if (oLockCursor == INVALID)
+			{
+				oLockCursor->assign(
+					FROMVMT(surface, Index::LockCursor)
+				);
+			}
+
+			auto menuSys = g_Subsystems->Get<MenuSubsystem>();
+			if (menuSys->GetMenu()->Visible())
+			{
+				surface->UnlockCursor();
+			}
+			else {
+				oLockCursor(surface);
+			}
+		}
 	}
 	void ENVY_API InitializeHooks()
 	{
-		g_LocalPlayer = *(C_LocalPlayer*)(Peb::Instance()->GetModule("client.dll").FindPattern("8B 0D ? ? ? ? 83 FF FF 74 07") + 2);
+		auto peb = Peb::Instance();
+		auto clientDLL = peb->GetModule("client_panorama.dll");
+		g_LocalPlayer = *(C_LocalPlayer*)(clientDLL.FindPattern("8B 0D ? ? ? ? 83 FF FF 74 07") + 2);
 		auto module = Peb::Instance()->GetModule("shaderapidx9.dll");
 		g_D3DDevice = **(IDirect3DDevice9***)(module.FindPattern("A1 ? ? ? ? 50 8B 08 FF 51 0C") + 1);
 		auto device_vmt = VMTManager::Instance()->CreateVMT((uintptr_t)g_D3DDevice);
@@ -429,17 +469,20 @@ namespace Envy
 		auto panel = Interfaces::Instance()->GetInterface<IPanel>();
 		auto prediction = Interfaces::Instance()->GetInterface<IPrediction>();
 		auto clientmode = Interfaces::Instance()->GetInterface<IClientMode>();
+		auto surface = Interfaces::Instance()->GetInterface<ISurface>();
 
 		panel_vmt = VMTManager::Instance()->CreateVMT((uintptr_t)panel->get());
 		client_vmt = VMTManager::Instance()->CreateVMT((uintptr_t)base_client->get());
+		surface_vmt = VMTManager::Instance()->CreateVMT((uintptr_t)surface->get());
 
 		panel_vmt->HookFunction(Index::PaintTraverse, (uintptr_t)Hooks::hkPaintTraverse);
-		client_vmt->HookFunction(Index::CreateMove, (uintptr_t)Hooks::hkCreateMove_Proxy);
-		client_vmt->HookFunction(Index::FrameStageNotify, (uintptr_t)Hooks::hkFrameStageNotify);
-		client_vmt->HookFunction(Index::WriteUsercmdDeltaToBuffer, (uintptr_t)Hooks::hkWriteUsercmdDeltaToBuffer);
+		surface_vmt->HookFunction(Index::LockCursor, (uintptr_t)Hooks::hkLockCursor);
+		//client_vmt->HookFunction(Index::CreateMove, (uintptr_t)Hooks::hkCreateMove_Proxy);
+		//client_vmt->HookFunction(Index::FrameStageNotify, (uintptr_t)Hooks::hkFrameStageNotify);
+		//client_vmt->HookFunction(Index::WriteUsercmdDeltaToBuffer, (uintptr_t)Hooks::hkWriteUsercmdDeltaToBuffer);
 
-		g_pClientPredictionVMT = VMTManager::Instance()->CreateVMT((uintptr_t)prediction->get());
-		g_pClientPredictionVMT->HookFunction(Index::ClientPredictionUpdate, (uintptr_t)Hooks::hkUpdate);
+		//g_pClientPredictionVMT = VMTManager::Instance()->CreateVMT((uintptr_t)prediction->get());
+		//g_pClientPredictionVMT->HookFunction(Index::ClientPredictionUpdate, (uintptr_t)Hooks::hkUpdate);
 
 		g_pClientModeVMT = VMTManager::Instance()->CreateVMT((uintptr_t)clientmode->get());
 		g_pClientModeVMT->HookFunction(Index::DoPostScreenSpaceEffects, (uintptr_t)Hooks::hkDoPostScreenEffects);

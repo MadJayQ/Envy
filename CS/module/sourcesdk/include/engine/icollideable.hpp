@@ -38,7 +38,7 @@ namespace Envy
 			void UpdatePartition()
 			{
 				using UpdatePartitionFn = void(__thiscall*)(ICollideable*);
-				static auto callable = (UpdatePartitionFn)((uintptr_t)Peb::Instance()->GetModule("client.dll").FindPattern("55 8B EC 83 EC 18 57 8B F9 8B 4F 04"));
+				static auto callable = (UpdatePartitionFn)((uintptr_t)Peb::Instance()->GetModule("client_panorama.dll").FindPattern("55 8B EC 83 EC 18 57 8B F9 8B 4F 04"));
 				return callable(this);
 			}
 		};

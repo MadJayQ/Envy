@@ -7,6 +7,8 @@
 
 #include "imgui_impl_dx9.h"
 
+#include "isurface.hpp"
+
 static constexpr const char* g_sValveWindowClass = "Valve001";
 namespace Envy
 {
@@ -60,6 +62,7 @@ namespace Envy
 		{
 			if (!m_pMenu->Visible())
 			{
+				auto surface = Interfaces::Instance()->GetInterface<ISurface>()->get();
 				m_bWindowOpen = false;
 				auto icvar = Interfaces::Instance()->GetInterface<ICvar>();
 				auto cl_mouseenable = (*icvar)->FindVar("cl_mouseenable");
@@ -82,10 +85,15 @@ namespace Envy
 
 	void MenuSubsystem::OnToggleMenu()
 	{
+		auto surface = Interfaces::Instance()->GetInterface<ISurface>()->get();
 		m_bWindowOpen = !m_bWindowOpen;
 		m_pMenu->Toggle();
+		if (m_bWindowOpen) {
+			surface->UnlockCursor();
+		}
+		else {
+			surface->LockCursor();
+		}
 		auto icvar = Interfaces::Instance()->GetInterface<ICvar>();
-		auto cl_mouseenable = (*icvar)->FindVar("cl_mouseenable");
-		cl_mouseenable->SetValue(!m_bWindowOpen);
 	}
 }

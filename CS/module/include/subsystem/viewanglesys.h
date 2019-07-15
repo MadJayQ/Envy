@@ -4,6 +4,7 @@
 #include "csgosdk.h"
 #include "aimbot.h"
 #include "antiaim.h"
+#include "triggerbot.h"
 
 #include <memory>
 
@@ -31,6 +32,7 @@ namespace Envy
 	private:
 		std::unique_ptr<Aimbot> m_Aimbot;
 		std::unique_ptr<AntiAim> m_AntiAim;
+		std::unique_ptr<Triggerbot> m_Triggerbot;
 	};
 
 

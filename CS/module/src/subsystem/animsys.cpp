@@ -63,7 +63,7 @@ namespace Envy
 	{
 		void UpdateAnimationState(CCSGOPlayerAnimState* anim, QAngle angle)
 		{
-			static auto UpdateAnimState = (uintptr_t)Peb::Instance()->GetModule("client.dll").FindPattern("55 8B EC 83 E4 F8 83 EC 18 56 57 8B F9 F3 0F 11 54 24");
+			static auto UpdateAnimState = (uintptr_t)Peb::Instance()->GetModule("client_panorama.dll").FindPattern("55 8B EC 83 E4 F8 83 EC 18 56 57 8B F9 F3 0F 11 54 24");
 
 			if (!UpdateAnimState)
 			{
@@ -84,7 +84,7 @@ namespace Envy
 		void ResetAnimationState(CCSGOPlayerAnimState * anim)
 		{
 			using ResetAnimStateFn = void(__thiscall*)(CCSGOPlayerAnimState*);
-			static auto ResetAnimState = (ResetAnimStateFn)(Peb::Instance()->GetModule("client.dll").FindPattern("56 6A 01 68 ? ? ? ? 8B F1"));
+			static auto ResetAnimState = (ResetAnimStateFn)(Peb::Instance()->GetModule("client_panorama.dll").FindPattern("56 6A 01 68 ? ? ? ? 8B F1"));
 
 			if (!ResetAnimState)
 				return;
@@ -95,7 +95,7 @@ namespace Envy
 		{
 			using CreateAnimStateFn = void(__thiscall*)(CCSGOPlayerAnimState*, C_BasePlayer*);
 
-			static auto CreateAnimState = (CreateAnimStateFn)(Peb::Instance()->GetModule("client.dll").FindPattern("55 8B EC 56 8B F1 B9 ? ? ? ? C7 46"));
+			static auto CreateAnimState = (CreateAnimStateFn)(Peb::Instance()->GetModule("client_panorama.dll").FindPattern("55 8B EC 56 8B F1 B9 ? ? ? ? C7 46"));
 
 			if (!CreateAnimState)
 				return;

@@ -14,8 +14,8 @@ namespace Envy
 		bool StandardFilterRules(IHandleEntity * pHandleEntity, int fContentsMask)
 		{
 
-			static auto StandardFilterRulesCall = (uintptr_t)Peb::Instance()->GetModule("client.dll").FindPattern(StandardFilterRulesCallSig);
-			static auto StandardFilterRulesMemory = *(uintptr_t*)(Peb::Instance()->GetModule("client.dll").FindPattern(StandardFilterRulesCallSig) + 0x15);
+			static auto StandardFilterRulesCall = (uintptr_t)Peb::Instance()->GetModule("client_panorama.dll").FindPattern(StandardFilterRulesCallSig);
+			static auto StandardFilterRulesMemory = *(uintptr_t*)(Peb::Instance()->GetModule("client_panorama.dll").FindPattern(StandardFilterRulesCallSig) + 0x15);
 
 			C_BaseEntity* pCollide = (C_BaseEntity*)pHandleEntity; //(*(CBaseEntity*(**)(IHandleEntity*))(*(DWORD *)pHandleEntity + 0x1C))(pHandleEntity);
 
@@ -105,7 +105,7 @@ namespace Envy
 		BOOLEAN GameRulesShouldCollide(int collisionGroup0, int collisionGroup1)
 		{
 
-			static uintptr_t g_pGameRules = *(uintptr_t*)(Peb::Instance()->GetModule("client.dll").FindPattern("8B 0D ? ? ? ? FF B3 ? ? ? ? FF 77 08") + 0x2);
+			static uintptr_t g_pGameRules = *(uintptr_t*)(Peb::Instance()->GetModule("client_panorama.dll").FindPattern("8B 0D ? ? ? ? FF B3 ? ? ? ? FF 77 08") + 0x2);
 #if 1
 			__asm {
 				push collisionGroup1

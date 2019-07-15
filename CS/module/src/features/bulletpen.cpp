@@ -54,9 +54,9 @@ namespace Envy
 		bool IsBreakableEntity(C_BaseEntity* entity)
 		{
 
-			static auto IsBreakableEntityCall = (uintptr_t)Peb::Instance()->GetModule("client.dll").FindPattern("6A 18 68 ? ? ? ? E8 ? ? ? ? 8B 7D 08");
-			static auto IsBreakableEntityCall1Args = (uintptr_t)Peb::Instance()->GetModule("client.dll").FindPattern("6A 00 68 ? ? ? ? 68 ? ? ? ? 6A 00 56 E8 ? ? ? ? 83 C4 14 85 C0 74 12 8B 10");
-			static auto IsBreakableEntityCall2Args = (uintptr_t)Peb::Instance()->GetModule("client.dll").FindPattern("6A 00 68 ? ? ? ? 68 ? ? ? ? 6A 00 56 E8 ? ? ? ? 8B C8 83 C4 14 85 C9 74 17");
+			static auto IsBreakableEntityCall = (uintptr_t)Peb::Instance()->GetModule("client_panorama.dll").FindPattern("6A 18 68 ? ? ? ? E8 ? ? ? ? 8B 7D 08");
+			static auto IsBreakableEntityCall1Args = (uintptr_t)Peb::Instance()->GetModule("client_panorama.dll").FindPattern("6A 00 68 ? ? ? ? 68 ? ? ? ? 6A 00 56 E8 ? ? ? ? 83 C4 14 85 C0 74 12 8B 10");
+			static auto IsBreakableEntityCall2Args = (uintptr_t)Peb::Instance()->GetModule("client_panorama.dll").FindPattern("6A 00 68 ? ? ? ? 68 ? ? ? ? 6A 00 56 E8 ? ? ? ? 8B C8 83 C4 14 85 C9 74 17");
 			if (!entity)
 				return false;
 			//Fix this...

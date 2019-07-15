@@ -176,6 +176,7 @@ namespace Envy
 
 	void DrawSkeletonESP(ESP* thisptr)
 	{
+		return;
 		if (!Options::Instance()->esp_skeleton()) return;
 		CACHED auto DrawLine = [&](const Vector& a, const Vector& b)
 		{
@@ -196,22 +197,22 @@ namespace Envy
 		}
 		renderer->DrawSetColor(Color::Red);
 		renderer->DrawOutlinedCircle(bones[HITBOX_HEAD].x, bones[HITBOX_HEAD].y, 4, 36);
-		renderer->DrawSetColor(Color::White);
-		DrawLine(bones[HITBOX_HEAD], bones[HITBOX_NECK]);
-		DrawLine(bones[HITBOX_NECK], bones[HITBOX_CHEST]);
-		DrawLine(bones[HITBOX_CHEST], bones[HITBOX_LEFT_UPPER_ARM]);
-		DrawLine(bones[HITBOX_CHEST], bones[HITBOX_RIGHT_UPPER_ARM]);
-		DrawLine(bones[HITBOX_LEFT_UPPER_ARM], bones[HITBOX_LEFT_FOREARM]);
-		DrawLine(bones[HITBOX_RIGHT_UPPER_ARM], bones[HITBOX_RIGHT_FOREARM]);
-		DrawLine(bones[HITBOX_LEFT_UPPER_ARM], bones[HITBOX_LEFT_FOREARM]);
-		DrawLine(bones[HITBOX_RIGHT_UPPER_ARM], bones[HITBOX_RIGHT_FOREARM]);
-		DrawLine(bones[HITBOX_LEFT_FOREARM], bones[HITBOX_LEFT_HAND]);
-		DrawLine(bones[HITBOX_RIGHT_FOREARM], bones[HITBOX_RIGHT_HAND]);
-		DrawLine(bones[HITBOX_CHEST], bones[HITBOX_PELVIS]);
-		DrawLine(bones[HITBOX_PELVIS], bones[HITBOX_LEFT_CALF]);
-		DrawLine(bones[HITBOX_PELVIS], bones[HITBOX_RIGHT_CALF]);
-		DrawLine(bones[HITBOX_LEFT_CALF], bones[HITBOX_LEFT_FOOT]);
-		DrawLine(bones[HITBOX_RIGHT_CALF], bones[HITBOX_RIGHT_FOOT]);
+		//renderer->DrawSetColor(Color::White);
+		//DrawLine(bones[HITBOX_HEAD], bones[HITBOX_NECK]);
+		//DrawLine(bones[HITBOX_NECK], bones[HITBOX_CHEST]);
+		//DrawLine(bones[HITBOX_CHEST], bones[HITBOX_LEFT_UPPER_ARM]);
+		//DrawLine(bones[HITBOX_CHEST], bones[HITBOX_RIGHT_UPPER_ARM]);
+		//DrawLine(bones[HITBOX_LEFT_UPPER_ARM], bones[HITBOX_LEFT_FOREARM]);
+		//DrawLine(bones[HITBOX_RIGHT_UPPER_ARM], bones[HITBOX_RIGHT_FOREARM]);
+		//DrawLine(bones[HITBOX_LEFT_UPPER_ARM], bones[HITBOX_LEFT_FOREARM]);
+		//DrawLine(bones[HITBOX_RIGHT_UPPER_ARM], bones[HITBOX_RIGHT_FOREARM]);
+		//DrawLine(bones[HITBOX_LEFT_FOREARM], bones[HITBOX_LEFT_HAND]);
+		//DrawLine(bones[HITBOX_RIGHT_FOREARM], bones[HITBOX_RIGHT_HAND]);
+		//DrawLine(bones[HITBOX_CHEST], bones[HITBOX_PELVIS]);
+		//DrawLine(bones[HITBOX_PELVIS], bones[HITBOX_LEFT_CALF]);
+		//DrawLine(bones[HITBOX_PELVIS], bones[HITBOX_RIGHT_CALF]);
+		//DrawLine(bones[HITBOX_LEFT_CALF], bones[HITBOX_LEFT_FOOT]);
+		//DrawLine(bones[HITBOX_RIGHT_CALF], bones[HITBOX_RIGHT_FOOT]);
 	}
 
 	void DrawHealthBar(ESP* thisptr)
@@ -284,12 +285,12 @@ namespace Envy
 		auto fov = fabsf(Math::GetFOV(start, dst, view));
 		int x = ctx.bbox.r + 10;
 		int y = ctx.bbox.t + 5;
-		renderer->DrawSetTextPos(x, y);
-		renderer->DrawSetTextFont(Fonts::esp);
-		renderer->DrawSetColor(Color::White);
-		wchar_t buf[256];
-		swprintf(buf, L"D: %.2f F: %.2f", distance, fov);
-		renderer->DrawPrintText(buf, wcslen(buf));
+		//renderer->DrawSetTextPos(x, y);
+		//renderer->DrawSetTextFont(Fonts::esp);
+		//renderer->DrawSetColor(Color::White);
+		//wchar_t buf[256];
+		//swprintf(buf, L"D: %.2f F: %.2f %d %s", distance, fov, ctx.ent->GetClientClass()->m_ClassID, ctx.ent->GetClientClass()->m_pNetworkName);
+		//renderer->DrawPrintText(buf, wcslen(buf));
 
 	}
 
@@ -418,8 +419,8 @@ namespace Envy
 			Vector screen_points[8] = {};
 
 			for (int i = 0; i < 8; i++) {
-				if (!Math::WorldToScreen(pointsTransformed[i], screen_points[i]))
-					return false;
+				if (!Math::WorldToScreen(pointsTransformed[i], screen_points[i])){}
+					//return false;
 			}
 
 			auto left = screen_points[0].x;
@@ -447,7 +448,9 @@ namespace Envy
 		ctx.ent = ent;
 		renderer = Interfaces::Instance()->GetInterface<ISurface>()->get();
 		ctx.drawfuncs = nullptr;
-		if (ent->IsPlayer() && ent->m_iTeamNum() != g_LocalPlayer->m_iTeamNum())
+		auto classID = ent->GetClientClass()->m_ClassID;
+		bool isPlayer = (classID == 40);///SourceEngine::ClassId::ClassId_CCSPlayer);
+		if (isPlayer && ent->m_iTeamNum() != g_LocalPlayer->m_iTeamNum())
 		{
 			C_BasePlayer* player = reinterpret_cast<C_BasePlayer*>(ent);
 			ctx.draw = !player->IsDormant();

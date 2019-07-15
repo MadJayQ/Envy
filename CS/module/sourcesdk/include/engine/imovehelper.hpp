@@ -23,7 +23,7 @@ namespace Envy
 		virtual Interface* Init() override
 		{
 			m_data = **reinterpret_cast<Interface***>(
-				Peb::Instance()->GetModule("client.dll").FindPattern("8B 0D ? ? ? ? 8B 45 ? 51 8B D4 89 02 8B 01") + 2
+				Peb::Instance()->GetModule("client_panorama.dll").FindPattern("8B 0D ? ? ? ? 8B 45 ? 51 8B D4 89 02 8B 01") + 2
 			);
 			SourceInterface<SourceEngine::_IMoveHelper_>::Init();
 			return m_data;

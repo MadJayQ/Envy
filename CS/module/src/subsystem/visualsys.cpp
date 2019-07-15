@@ -61,21 +61,21 @@ namespace Envy
 		else if (panelId == panel)
 		{
 			m_ESP->Watermark();
-#if 1
-			if ((*engine)->IsInGame() && (*engine)->IsConnected())
-			{
-				auto render = Interfaces::Instance()->GetInterface<ISurface>()->get();
-				render->DrawSetColor(Color::White);
-				render->DrawSetTextPos(50, 350);
-				wchar_t buf[512];
-				swprintf_s(buf, L"Turn Time: %.3f Anim Turn Time: %.3f", m_flNextTurnTime, m_flAnimNextTime);
-				render->DrawPrintText(buf, wcslen(buf));
-			}
-#endif
-			if (Options::Instance()->misc_visualize_aa() && (Interfaces::Instance()->GetInterface<CInput>())->ThirdPerson())
-			{
-				m_ESP->DrawAngleLines(m_flRealYaw, m_flFakeYaw, g_LocalPlayer->m_flLowerBodyYawTarget());
-			}
+//#if 1
+//			if ((*engine)->IsInGame() && (*engine)->IsConnected())
+//			{
+//				auto render = Interfaces::Instance()->GetInterface<ISurface>()->get();
+//				render->DrawSetColor(Color::White);
+//				render->DrawSetTextPos(50, 350);
+//				wchar_t buf[512];
+//				swprintf_s(buf, L"Turn Time: %.3f Anim Turn Time: %.3f", m_flNextTurnTime, m_flAnimNextTime);
+//				render->DrawPrintText(buf, wcslen(buf));
+//			}
+//#endif
+//			if (/*Options::Instance()->misc_visualize_aa() && (Interfaces::Instance()->GetInterface<CInput>())->ThirdPerson()*/ false )
+//			{
+//				m_ESP->DrawAngleLines(m_flRealYaw, m_flFakeYaw, g_LocalPlayer->m_flLowerBodyYawTarget());
+//			}
 		}
 
 		return true;
@@ -95,7 +95,7 @@ namespace Envy
 			if (!ent || ent->IsDormant())
 				continue;
 
-			if (ent->GetClientClass()->m_ClassID != ClassId_CCSPlayer)
+			if (ent->GetClientClass()->m_ClassID != 40)
 				continue;
 
 			if (!ent->IsAlive())

@@ -68,7 +68,7 @@ namespace Envy
 			ImGui::Checkbox("Bounding Box", &Options::Instance()->esp_bbox());
 			ImGui::Checkbox("Health Bar", &Options::Instance()->esp_hp_bar());
 			ImGui::Checkbox("Armor Bar", &Options::Instance()->esp_armor_bar());
-			ImGui::Checkbox("Skeleton ESP", &Options::Instance()->esp_skeleton());
+			ImGui::Checkbox("Headshot Circle", &Options::Instance()->esp_skeleton());
 		}
 		ImGui::EndGroupBox();
 		ImGui::SameLine(0.f, 25.f);

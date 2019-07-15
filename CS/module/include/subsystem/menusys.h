@@ -26,6 +26,10 @@ namespace Envy
 		void OnReset(IDirect3DDevice9* ptr, D3DPRESENT_PARAMETERS * pPresentationParameters);
 		void OnEndScene(IDirect3DDevice9* ptr);
 
+		bool WindowOpen() const { return m_bWindowOpen; }
+
+		Menu* GetMenu() const { return m_pMenu.get(); }
+
 		LRESULT ENVY_API MenuMessagePump(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 		void OnToggleMenu();

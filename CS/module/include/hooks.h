@@ -17,14 +17,16 @@ namespace Envy
 		constexpr auto EndScene = 42;
 		constexpr auto Reset = 16;
 		constexpr auto PaintTraverse = 41;
-		constexpr auto CreateMove = 21;
+		constexpr auto CreateMove = 22;
 		constexpr auto PlaySound = 82;
 		constexpr auto FrameStageNotify = 36;
 		constexpr auto DrawModelExecute = 21;
 		constexpr auto DoPostScreenSpaceEffects = 44;
 		constexpr auto ClientPredictionUpdate = 3;
-		constexpr auto WriteUsercmdDeltaToBuffer = 23;
+		constexpr auto WriteUsercmdDeltaToBuffer = 24;
 		constexpr auto Transmit = 49;
+		constexpr auto LockCursor = 67;
+		constexpr auto UnlockCursor = 66;
 	}
 	namespace Hooks
 	{

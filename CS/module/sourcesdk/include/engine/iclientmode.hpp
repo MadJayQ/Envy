@@ -86,8 +86,10 @@ namespace Envy
 
 		virtual Interface* Init() override
 		{
-			m_data = *reinterpret_cast<Interface**>(
-				Peb::Instance()->GetModule("client.dll").FindPattern("A1 ? ? ? ? 8B 80 ? ? ? ? 5D") + 1
+
+			intptr_t clientModeAddr = reinterpret_cast<intptr_t>(Peb::Instance()->GetModule("client_panorama.dll").FindPattern("8B 0D ? ? ? ? 8B 01 5D FF 60 30") + 0x2);
+			m_data = **reinterpret_cast<Interface***>(
+				clientModeAddr
 			);
 			SourceInterface<SourceEngine::_IClientMode_>::Init();
 			return m_data;
