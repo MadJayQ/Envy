@@ -39,7 +39,6 @@ public class EnvyFTPServer {
 
         void WriteData(DataOutputStream out, EnvyNetMessage msg, boolean verbose) throws IOException {
             msg.writeTo(out);
-            out.writeByte('\n');
             if (verbose) {
                 System.out.print("Sending: ");
                 byte[] dat = msg.toByteArray();
@@ -48,21 +47,24 @@ public class EnvyFTPServer {
                 }
                 System.out.println("to " + this.socket.getInetAddress().getHostAddress());
             }
-            /*
-            out.writeInt(data.length);
-            out.write(data);
-            if (verbose) {
-                System.out.print("Sending: ");
-                byte[] sizedata = ByteBuffer.allocate(4).putInt(data.length).array();
-                for(int i = 0; i < sizedata.length; i++) {
-                    System.out.print(sizedata[i] + " ");
+            out.flush();
+        }
+
+        void WriteData(DataOutputStream out, EnvyNetMessage msg[], boolean verbose) throws IOException {
+            for (EnvyNetMessage msg1 : msg) {
+                msg1.writeTo(out);
+                //UTF U+0004 END OF TRANSMISSION CHARACTER
+                out.writeByte(04);
+                if (verbose) {
+                    System.out.print("Sending: ");
+                    byte[] dat = msg1.toByteArray();
+                    for (int j = 0; j < dat.length; j++) {
+                        System.out.print(dat[j] + " ");
+                    }
+                    System.out.println("to " + this.socket.getInetAddress().getHostAddress());
                 }
-                for (int i = 0; i < data.length; i++) {
-                    System.out.print(data[i] + " ");
-                }
-                System.out.println("to " + this.socket.getInetAddress().getHostAddress());
             }
-             */
+            out.flush();
         }
 
         @Override
@@ -78,8 +80,8 @@ public class EnvyFTPServer {
                     System.out.println("RECEIVED: " + input);
                     toWrite = currentProtocol.processInput(input);
                     if (this.currentProtocol.shouldTerminate()) {
-                        WriteData(out, toWrite, true);
-                        WriteData(out, currentProtocol.requestTerminate(), true);
+                        EnvyNetMessage[] messages = {toWrite, currentProtocol.requestTerminate()};
+                        WriteData(out, messages, true);
                         break;
                     } else {
                         WriteData(out, toWrite, true);

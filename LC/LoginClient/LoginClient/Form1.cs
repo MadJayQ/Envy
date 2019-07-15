@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace LoginClient
 {
-    public partial class Form1 : Form
+    public partial class LoginClient : Form
     {
-        public Form1()
+        public LoginClient()
         {
             InitializeComponent();
             Console.WriteLine(System.IO.Directory.GetCurrentDirectory());
@@ -30,7 +30,13 @@ namespace LoginClient
             {
                 Console.WriteLine("CONNECTED");
                 var ap = new EnvyClientAuthProtocol(conn);
+                if(ap.AuthenticateUser(user))
+                {
+                    lblStatus.Visible = true;
+
+                }
                 ap.AuthenticateUser(user);
+                
             }
         }
 

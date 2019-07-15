@@ -83,9 +83,9 @@ public class EnvyAP extends EnvyProtocol {
                 String info[] = input.split(":");
                 User user = new User(info[0], info[1]);
                 if(user.authenticate(LoginServerCore.dbFileName)) {
-                    byte[] data = (user.handle() + ":" + user.role()).getBytes();
-                    messageBuilder.setData(ByteString.copyFrom(data));
-                    messageBuilder.setDataSize(data.length);
+                    ByteString data = ByteString.copyFromUtf8(user.handle() + ":" + user.role());
+                    messageBuilder.setData(data);
+                    messageBuilder.setDataSize(data.size());
                     break;
                 }
                 messageBuilder.setDataSize(-1);
