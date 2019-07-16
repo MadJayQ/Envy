@@ -40,6 +40,8 @@ namespace Envy
 				)
 			);
 
+		std::cout << "Size of CUserCmd Struct is: 0x" << std::hex << sizeof(CUserCmd) << std::dec << std::endl;
+		assert(sizeof(CUserCmd) == 0x64);
 
 		g_Subsystems = std::make_unique<CheatSubsystems>();
 

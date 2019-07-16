@@ -116,7 +116,7 @@ namespace Envy
 			CACHED auto input = Interfaces::Instance()->GetInterface<CInput>();
 			CACHED auto viewanglesys = g_Subsystems->Get<ViewangleSubssytem>();
 
-			auto cmd = input->GetUserCmd(sequence_number);
+			auto cmd = (input)->GetUserCmd(sequence_number);
 			auto verified = input->GetVerifiedCmd(sequence_number);
 
 			if (!cmd || !cmd->command_number)
@@ -358,7 +358,7 @@ namespace Envy
 
 			auto input = Interfaces::Instance()->GetInterface<CInput>();
 			
-			CUserCmd* lastreal = input->GetUserCmd(slot, from);
+			CUserCmd* lastreal = nullptr;//(*input)->GetUserCmd(slot, from);
 			CUserCmd fromCmd;
 			if (lastreal)
 			{
@@ -477,7 +477,7 @@ namespace Envy
 
 		panel_vmt->HookFunction(Index::PaintTraverse, (uintptr_t)Hooks::hkPaintTraverse);
 		surface_vmt->HookFunction(Index::LockCursor, (uintptr_t)Hooks::hkLockCursor);
-		//client_vmt->HookFunction(Index::CreateMove, (uintptr_t)Hooks::hkCreateMove_Proxy);
+		client_vmt->HookFunction(Index::CreateMove, (uintptr_t)Hooks::hkCreateMove_Proxy);
 		//client_vmt->HookFunction(Index::FrameStageNotify, (uintptr_t)Hooks::hkFrameStageNotify);
 		//client_vmt->HookFunction(Index::WriteUsercmdDeltaToBuffer, (uintptr_t)Hooks::hkWriteUsercmdDeltaToBuffer);
 
