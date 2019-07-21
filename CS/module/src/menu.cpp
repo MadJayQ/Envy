@@ -1,6 +1,10 @@
 #include "..\include\menu.h"
 #include "imgui_internal.h"
 #include "menutabs.h"
+
+#include "camerasys.h"
+
+
 namespace Envy
 {
 
@@ -68,7 +72,7 @@ namespace Envy
 		auto hvhnav = m_pNavBar->CreateNavItem("HvH");
 		hvhnav->CreateTab("Anti-Aim", DrawAntiAimTab);
 		hvhnav->CreateTab("Hitscan Editor", DrawHitscanTab);
-		
+
 	}
 
 
@@ -81,31 +85,66 @@ namespace Envy
 		ImGui::PushStyle(m_style);
 		ImGui::SetNextWindowPos(ImVec2{ 0,0 }, ImGuiSetCond_Once);
 		ImGui::SetNextWindowSize(ImVec2{ 750, 600 }, ImGuiSetCond_Once);
-		if (ImGui::Begin("envycheat.cc - By MadJayQ",
-			&m_visible,
-			ImGuiWindowFlags_NoCollapse |
-			ImGuiWindowFlags_ShowBorders |
-			ImGuiWindowFlags_NoResize))
+		if (m_visible)
 		{
-			ImVec2 navBarSize = m_pNavBar->Size();
-			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2::Zero);
-			ImGui::BeginGroupBox("##navbar", navBarSize);
-			{
-				m_pNavBar->DrawNavBar();
-			}
-			ImGui::EndGroupBox();
-			ImGui::PopStyleVar();
-			ImGui::SameLine();
-			ImGui::BeginGroupBox("##body", ImVec2{ 0.f, navBarSize.y });
-			{
-				m_pNavBar->DrawSelectedNavItem();
-			}
-			ImGui::EndGroupBox();
-			if (ImGui::Button("YEET", ImVec2{ 150.f, 25.f }))
-			{
 
+			if (ImGui::Begin("envycheat.cc - By MadJayQ",
+				&m_visible,
+				ImGuiWindowFlags_NoCollapse |
+				ImGuiWindowFlags_ShowBorders |
+				ImGuiWindowFlags_NoResize))
+			{
+				ImVec2 navBarSize = m_pNavBar->Size();
+				ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2::Zero);
+				ImGui::BeginGroupBox("##navbar", navBarSize);
+				{
+					m_pNavBar->DrawNavBar();
+				}
+				ImGui::EndGroupBox();
+				ImGui::PopStyleVar();
+				ImGui::SameLine();
+				ImGui::BeginGroupBox("##body", ImVec2{ 0.f, navBarSize.y });
+				{
+					m_pNavBar->DrawSelectedNavItem();
+				}
+				ImGui::EndGroupBox();
+				if (ImGui::Button("YEET", ImVec2{ 150.f, 25.f }))
+				{
+
+				}
+
+				if (ImGui::Button("External Camera Window", ImVec2{ 150.f, 25.f }))
+				{
+					ToggleExternal(true);
+				}
+				ImGui::End();
 			}
-			ImGui::End();
+		}
+		if (m_externalWindowVisible)
+		{
+			if (ImGui::Begin("envycheat.cc - External Camera", &m_externalWindowVisible, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_ShowBorders))
+			{
+				auto cameraSys = g_Subsystems->Get<CameraSubsystem>();
+				auto size = ImGui::GetWindowSize();
+				cameraSys->SetCameraExtents(size.x, size.y);
+
+				IDirect3DTexture9* texture = cameraSys->GetRawCameraTexture();
+				if (texture != NULL)
+				{
+					ImVec2 uv_min(0.f, 0.f);
+					ImVec2 uv_max(1.f, 1.f);
+
+					D3DSURFACE_DESC textureDesc;
+					texture->GetLevelDesc(0, &textureDesc);
+
+					ImGui::Image(texture, ImVec2((float)textureDesc.Width, (float)textureDesc.Height), uv_min, uv_max);
+				}
+				else
+				{
+					ImGui::Text("MISSION FAILED");
+				}
+				ImGui::End();
+			}
 		}
 		ImGui::PopStyle();
 		ImGui::Render();

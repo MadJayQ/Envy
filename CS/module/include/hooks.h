@@ -27,6 +27,7 @@ namespace Envy
 		constexpr auto Transmit = 49;
 		constexpr auto LockCursor = 67;
 		constexpr auto UnlockCursor = 66;
+		constexpr auto RenderView = 6;
 	}
 	namespace Hooks
 	{
@@ -39,6 +40,7 @@ namespace Envy
 		void __fastcall hkUpdate(SourceEngine::_IPrediction_* pred, int edx, int startframe, bool validframe, int incoming_ack, int outgoing_cmd);
 		bool __fastcall hkWriteUsercmdDeltaToBuffer(SourceEngine::_IBaseClientDll_*, int, int, void*, int, int, bool);
 		int __fastcall hkDoPostScreenEffects(SourceEngine::_IClientMode_*, int, int);
+		void __fastcall hkRenderView(SourceEngine::_IViewRender_*, int, SourceEngine::CViewSetup&, SourceEngine::CViewSetup&, int, int);
 	}
 
 

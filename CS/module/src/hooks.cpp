@@ -7,6 +7,7 @@
 #include "menusys.h"
 #include "visualsys.h"
 #include "viewanglesys.h"
+#include "camerasys.h"
 #include "lagcompsys.h"
 
 
@@ -30,6 +31,8 @@ namespace Envy
 	Function<int, THISCALL, _IClientMode_*, int> oDoPostScreenEffects(INVALID);
 	Function<void, THISCALL, _ISurface_*> oUnlockCursor(INVALID);
 	Function<void, THISCALL, _ISurface_*>oLockCursor(INVALID);
+	Function<void, THISCALL, _IViewRender_*, CViewSetup&, CViewSetup&, int, int> oRenderView(INVALID);
+
 
 
 	VMT* panel_vmt;
@@ -37,6 +40,7 @@ namespace Envy
 	VMT* surface_vmt;
 	VMT* g_pClientPredictionVMT;
 	VMT* g_pClientModeVMT;
+	VMT* viewrender_vmt;
 
 	IDirect3DDevice9* g_D3DDevice;
 	namespace Hooks 
@@ -413,10 +417,57 @@ namespace Envy
 			CACHED auto lagcompsys = g_Subsystems->Get<LagCompensationSubsystem>();
 
 
-			viewanglesys->OnFrameStageNotify(stage);
-			lagcompsys->OnFrameStageNotify(stage);
+			//viewanglesys->OnFrameStageNotify(stage);
+			//lagcompsys->OnFrameStageNotify(stage);
+
+			if (stage == ClientFrameStage_t::FRAME_RENDER_START)
+			{
+
+				CACHED uintptr_t OcclusionOffset = (uintptr_t)Peb::Instance()->GetModule("client.dll").FindPattern("C7 87 ? ? ? ? ? ? ? ? 85 F6 0F 84") + 2;
+				CACHED uintptr_t FrameCountOFfset = (uintptr_t)Peb::Instance()->GetModule("client.dll").FindPattern("8B B7 ? ? ? ? 89 75 F8") + 2;
+
+				auto globalVars = Interfaces::Instance()->GetInterface<CGlobalVarsBase>();
+				auto engineClient = Interfaces::Instance()->GetInterface<IVEngineClient>();
+				auto entityList = Interfaces::Instance()->GetInterface<IClientEntityList>();
+
+				for (int i = 1; i <= (*globalVars)->maxClients; i++)
+				{
+					if (i == (*engineClient)->GetLocalPlayer()) continue;
+
+					C_BaseEntity* entity = entityList->GetEntityByIndex(i);
+
+					if (!entity) continue;
+
+					*(int*)((uintptr_t)entity + 0xA30) = (*globalVars)->framecount;
+					*(int*)((uintptr_t)entity + 0xA28) = 0;
+				}
+			}
 
 			return oFrameStageNotify(client, stage);
+
+		}
+
+		void ENVY_HOOK hkRenderView(
+			_IViewRender_* render,
+			int edx,
+			CViewSetup& view,
+			CViewSetup& hudView,
+			int clearFlags,
+			int whatToDraw
+		)
+		{
+			if (oRenderView == INVALID)
+			{
+				oRenderView->assign(
+					FROMVMT(render, Index::RenderView)
+				);
+			}
+
+
+			auto cameraSys = g_Subsystems->Get<CameraSubsystem>();
+			cameraSys->OnRenderView(view, hudView, oRenderView);
+
+			oRenderView(render, view, hudView, clearFlags, whatToDraw);
 
 		}
 		void ENVY_HOOK hkUnlockCursor(
@@ -470,15 +521,19 @@ namespace Envy
 		auto prediction = Interfaces::Instance()->GetInterface<IPrediction>();
 		auto clientmode = Interfaces::Instance()->GetInterface<IClientMode>();
 		auto surface = Interfaces::Instance()->GetInterface<ISurface>();
+		auto viewrender = Interfaces::Instance()->GetInterface<IViewRender>();
 
 		panel_vmt = VMTManager::Instance()->CreateVMT((uintptr_t)panel->get());
 		client_vmt = VMTManager::Instance()->CreateVMT((uintptr_t)base_client->get());
 		surface_vmt = VMTManager::Instance()->CreateVMT((uintptr_t)surface->get());
+		viewrender_vmt = VMTManager::Instance()->CreateVMT((uintptr_t)viewrender->get());
+
 
 		panel_vmt->HookFunction(Index::PaintTraverse, (uintptr_t)Hooks::hkPaintTraverse);
 		surface_vmt->HookFunction(Index::LockCursor, (uintptr_t)Hooks::hkLockCursor);
-		client_vmt->HookFunction(Index::CreateMove, (uintptr_t)Hooks::hkCreateMove_Proxy);
-		//client_vmt->HookFunction(Index::FrameStageNotify, (uintptr_t)Hooks::hkFrameStageNotify);
+		viewrender_vmt->HookFunction(Index::RenderView, (uintptr_t)Hooks::hkRenderView);
+		//client_vmt->HookFunction(Index::CreateMove, (uintptr_t)Hooks::hkCreateMove_Proxy);
+		client_vmt->HookFunction(Index::FrameStageNotify, (uintptr_t)Hooks::hkFrameStageNotify);
 		//client_vmt->HookFunction(Index::WriteUsercmdDeltaToBuffer, (uintptr_t)Hooks::hkWriteUsercmdDeltaToBuffer);
 
 		//g_pClientPredictionVMT = VMTManager::Instance()->CreateVMT((uintptr_t)prediction->get());
@@ -486,5 +541,7 @@ namespace Envy
 
 		g_pClientModeVMT = VMTManager::Instance()->CreateVMT((uintptr_t)clientmode->get());
 		g_pClientModeVMT->HookFunction(Index::DoPostScreenSpaceEffects, (uintptr_t)Hooks::hkDoPostScreenEffects);
+
+		g_Subsystems->Get<CameraSubsystem>();
 	}
 }

@@ -4,6 +4,9 @@
 #include "interfaces.h"
 #include <cstdint>
 
+#include "peb.h"
+#include "utlmemory.hpp"
+
 #define DECLARE_POINTER_HANDLE(name) struct name##__ { int unused; }; typedef struct name##__ *name
 #define MAXSTUDIOSKINS		32
 
@@ -36,6 +39,9 @@
 #define TEXTURE_GROUP_VERTEX_SHADERS				      "Vertex Shaders"
 #define TEXTURE_GROUP_RENDER_TARGET_SURFACE			  "RenderTarget Surfaces"
 #define TEXTURE_GROUP_MORPH_TARGETS					      "Morph Targets"
+#define CREATERENDERTARGETFLAGS_HDR 0x00000001
+
+struct IDirect3DTexture9;
 
 namespace Envy
 {
@@ -73,6 +79,8 @@ namespace Envy
 		class ITexture;
 		class IMaterialSystemHardwareConfig;
 		class CShadowMgr;
+
+		typedef int ImageFormat;
 
 		enum CompiledVtfFlags
 		{
@@ -320,7 +328,71 @@ namespace Envy
 			virtual ITexture*                       CreateNamedRenderTargetTexture(const char *pRTName, int w, int h, RenderTargetSizeMode_t sizeMode, ImageFormat format, MaterialRenderTargetDepth_t depth = MATERIAL_RT_DEPTH_SHARED, bool bClampTexCoords = true, bool bAutoMipMap = false) = 0;
 			virtual ITexture*                       CreateNamedRenderTargetTextureEx2(const char *pRTName, int w, int h, RenderTargetSizeMode_t sizeMode, ImageFormat format, MaterialRenderTargetDepth_t depth = MATERIAL_RT_DEPTH_SHARED, unsigned int textureFlags = TEXTUREFLAGS_CLAMPS | TEXTUREFLAGS_CLAMPT, unsigned int renderTargetFlags = 0) = 0;
 
+			char pad[0x2c68];
+			bool m_bGameStarted;
 		};
+
+		class IMatRenderContext {
+		public:
+			int Release()
+			{
+				using ReleaseFn = int(__thiscall*)(IMatRenderContext*);
+				return VMTManager::Instance()->GetVirtualFunction<ReleaseFn>(this, 1)(this);
+			}
+			void SetRenderTarget(ITexture* tex)
+			{
+				using SetRenderTargetFn = void(__thiscall*)(IMatRenderContext*, ITexture*);
+				return VMTManager::Instance()->GetVirtualFunction<SetRenderTargetFn>(this, 6)(this, tex);
+			}
+			void PushRenderTargetAndViewport()
+			{
+				using PushRenderTargetAndViewportFn = void(__thiscall*)(IMatRenderContext*);
+				return VMTManager::Instance()->GetVirtualFunction<PushRenderTargetAndViewportFn>(this, 119)(this);
+			}
+			void PopRenderTargetAndViewport()
+			{
+				using PopRenderTargetAndViewportFn = void(__thiscall*)(IMatRenderContext*);
+				return VMTManager::Instance()->GetVirtualFunction<PopRenderTargetAndViewportFn>(this, 120)(this);
+			}
+			void DrawScreenSpaceRectangle(IMaterial* material, 
+				int destX, int destY, int widht, int height, 
+				float srcTexturex0, float srcTexturey0, float srcTextureX1, float srcTextureY1, 
+				int srcTetrueWidth, int srcTextureHeight, 
+				IClientRenderable* renderable, int xDice, int yDice)
+			{
+				using DrawScreenSpaceRectangleFn = void(__thiscall*)(IMatRenderContext*, IMaterial*, int, int, int, int, float, float, float, float, int, int, IClientRenderable*, int, int);
+				return VMTManager::Instance()->GetVirtualFunction<DrawScreenSpaceRectangleFn>(this, 114)(this, material, destX, destY, widht, height,
+					srcTexturex0, srcTexturey0, srcTextureX1, srcTextureY1, srcTetrueWidth, srcTextureHeight,
+					renderable, xDice, yDice);
+			}
+
+		};
+
+		struct TextureHandle_t
+		{
+			char pad0x0_[0xC];
+			IDirect3DTexture9* d3dTexture;
+		};
+
+		class ITexture {
+		public:
+			int GetActualWidth()
+			{
+				using GetActualWidthFn = int(__thiscall*)(ITexture*);
+
+				return VMTManager::Instance()->GetVirtualFunction<GetActualWidthFn>(this, 3)(this);
+			}
+			int GetActualHeight()
+			{
+				using GetActualHeightFn = int(__thiscall*)(ITexture*);
+
+				return VMTManager::Instance()->GetVirtualFunction<GetActualHeightFn>(this, 4)(this);
+			}
+		public:
+			char pad0x0_[0x50];
+			TextureHandle_t** TextureHandles;
+		};
+
 	}
 
 	class IMaterialSystem : public SourceInterface<SourceEngine::_IMaterialSystem_>
@@ -337,5 +409,92 @@ namespace Envy
 
 			return m_data;
 		}
+
+		SourceEngine::IMaterial* FindMaterial(char const* pMaterialName, const char* pTextureGroupName, bool complain = true, const char* pComplainPrefix = NULL)
+		{
+			using FindMaterialFn = SourceEngine::IMaterial* (*__thiscall)(Interface*, const char*, const char*, bool, const char*);
+			return VMTManager::Instance()->GetVirtualFunction<FindMaterialFn>(m_data, 84)(m_data, pMaterialName, pTextureGroupName, complain, pComplainPrefix);
+		}
+
+		SourceEngine::IMaterial* CreateMaterial(const char* pMaterialName, SourceEngine::KeyValues* keyValuePair)
+		{
+			using CreateMaterialFn = SourceEngine::IMaterial* (*__thiscall)(Interface*, const char*, SourceEngine::KeyValues*);
+			return VMTManager::Instance()->GetVirtualFunction<CreateMaterialFn>(m_data, 83)(m_data, pMaterialName, keyValuePair);
+		}
+
+		SourceEngine::MaterialHandle_t FirstMaterial()
+		{
+			using FirstMaterialFn = SourceEngine::MaterialHandle_t(*__thiscall)(Interface*);
+			return VMTManager::Instance()->GetVirtualFunction<FirstMaterialFn>(m_data, 86)(m_data);
+		}
+		SourceEngine::MaterialHandle_t NextMaterial(SourceEngine::MaterialHandle_t handle)
+		{
+			using NextMaterialFn = SourceEngine::MaterialHandle_t(*__thiscall)(Interface*, SourceEngine::MaterialHandle_t);
+			return VMTManager::Instance()->GetVirtualFunction<NextMaterialFn>(m_data, 87)(m_data, handle);
+		}
+		SourceEngine::MaterialHandle_t InvalidMaterial()
+		{
+			using InvalidMaterialFn = SourceEngine::MaterialHandle_t(*__thiscall)(Interface*);
+			return VMTManager::Instance()->GetVirtualFunction<InvalidMaterialFn>(m_data, 88)(m_data);
+		}
+		SourceEngine::IMaterial* GetMaterial(SourceEngine::MaterialHandle_t handle)
+		{
+			using GetMaterialFn = SourceEngine::IMaterial* (*__thiscall)(Interface*, SourceEngine::MaterialHandle_t);
+			return VMTManager::Instance()->GetVirtualFunction<GetMaterialFn>(m_data, 89)(m_data, handle);
+		}
+
+		void ForceBeginRenderTargetAllocation()
+		{
+			bool oldState = m_data->m_bGameStarted;
+			m_data->m_bGameStarted = false;
+			VMTManager::Instance()->GetVirtualFunction<void(*__thiscall)(Interface*)>(m_data, 94)(m_data);
+			m_data->m_bGameStarted = oldState;
+		}
+
+		void ForceEndRenderTargetAllocation()
+		{
+			bool oldState = m_data->m_bGameStarted;
+			m_data->m_bGameStarted = false;
+			VMTManager::Instance()->GetVirtualFunction<void(*__thiscall)(Interface*)>(m_data, 95)(m_data);
+			m_data->m_bGameStarted = oldState;
+		}
+
+		SourceEngine::IMatRenderContext* GetRenderContext()
+		{
+			using GetRenderContextFn = SourceEngine::IMatRenderContext* (*__thiscall)(Interface*);
+			return VMTManager::Instance()->GetVirtualFunction<GetRenderContextFn>(m_data, 115)(m_data);
+		}
+
+		SourceEngine::ITexture* CreateFullFrameRenderTarget(const char* name) {
+			using CreateNamedRenderTargetTextureFn = SourceEngine::ITexture*(__thiscall*)(void*, const char* name, int w, int h, SourceEngine::RenderTargetSizeMode_t sizeMode,
+				SourceEngine::ImageFormat format, SourceEngine::MaterialRenderTargetDepth_t depth,
+				uint8_t textureFlags, int renderTargetFlags);
+
+			using GetBackBufferFormatFn = SourceEngine::ImageFormat(*__thiscall)(Interface*);
+
+			auto GetBackBufferFormat = VMTManager::Instance()->GetVirtualFunction<GetBackBufferFormatFn>(m_data, 36);
+
+			auto bbformat = GetBackBufferFormat(m_data);
+
+
+			return VMTManager::Instance()->GetVirtualFunction<CreateNamedRenderTargetTextureFn>(m_data, 97)(
+				m_data,
+				name, 1, 1, SourceEngine::RT_SIZE_FULL_FRAME_BUFFER, 
+				bbformat, SourceEngine::MATERIAL_RT_DEPTH_SHARED, 
+				SourceEngine::TEXTUREFLAGS_CLAMPS | SourceEngine::TEXTUREFLAGS_CLAMPT,
+				CREATERENDERTARGETFLAGS_HDR
+			);
+
+			//return m_data->CreateNamedRenderTargetTextureEx(
+			//	name, 1, 1, SourceEngine::RT_SIZE_FULL_FRAME_BUFFER, m_data->GetBackBufferFormat(),
+			//	SourceEngine::MATERIAL_RT_DEPTH_SHARED, SourceEngine::TEXTUREFLAGS_CLAMPS | SourceEngine::TEXTUREFLAGS_CLAMPT,
+			//	CREATERENDERTARGETFLAGS_HDR
+			//);
+		}
+		
+
+	private:
+
+		static constexpr const char* GameStartedSig = "80 B9 ? ? ? ? ? 74 0F";
 	};
 }

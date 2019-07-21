@@ -32,20 +32,67 @@ namespace Envy
 		class CViewSetup
 		{
 		public:
-			__int32   x;                  //0x0000 
-			__int32   x_old;              //0x0004 
-			__int32   y;                  //0x0008 
-			__int32   y_old;              //0x000C 
-			__int32   width;              //0x0010 
-			__int32   width_old;          //0x0014 
-			__int32   height;             //0x0018 
-			__int32   height_old;         //0x001C 
-			char      pad_0x0020[0x90];   //0x0020
-			float     fov;                //0x00B0 
-			float     viewmodel_fov;      //0x00B4 
-			Vector    origin;             //0x00B8 
-			Vector    angles;             //0x00C4 
-			char      pad_0x00D0[0x7C];   //0x00D0
+			int x;
+			int oldX;
+			int y;
+			int oldY;
+			int width;
+			int oldWidth;
+			int height;
+			int oldHeight;
+
+			bool m_bOrtho;
+			float m_OrthoLeft;
+			float m_OrthoTop;
+			float m_OrthoRight;
+			float m_OrthoBottom;
+
+		private:
+			char pad1[0x7C];
+
+		public:
+			float fov;
+			float fovViewmodel;
+			Vector origin;
+			QAngle angles;
+
+			float zNear;
+			float zFar;
+			float zNearViewmodel;
+			float zFarViewmodel;
+
+			float m_flAspectRatio;
+			float m_flNearBlurDepth;
+			float m_flNearFocusDepth;
+			float m_flFarFocusDepth;
+			float m_flFarBlurDepth;
+			float m_flNearBlurRadius;
+			float m_flFarBlurRadius;
+			int m_nDoFQuality;
+			MotionBlurMode_t m_nMotionBlurMode;
+
+			float m_flShutterTime;
+			Vector m_vShutterOpenPosition;
+			QAngle m_shutterOpenAngles;
+			Vector m_vShutterClosePosition;
+			QAngle m_shutterCloseAngles;
+
+			float m_flOffCenterTop;
+			float m_flOffCenterBottom;
+			float m_flOffCenterLeft;
+			float m_flOffCenterRight;
+
+			bool m_bOffCenter : 1;
+			bool m_bRenderToSubrectOfLargerScreen : 1;
+			bool m_bDoBloomAndToneMapping : 1;
+			bool m_bDoDepthOfField : 1;
+			bool m_bHDRTarget : 1;
+			bool m_bDrawWorldNormal : 1;
+			bool m_bCullFrontFaces : 1;
+			bool m_bCacheFullSceneState : 1;
+			bool m_bRenderFlashlightDepthTranslucents : 1;
+		private:
+			char pad2[0x40];
 
 		};//Size=0x014C
 

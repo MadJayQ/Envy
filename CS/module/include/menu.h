@@ -116,6 +116,7 @@ namespace Envy
 		Menu()
 		{
 			m_visible = false;
+			m_externalWindowVisible = false;
 			m_pNavBar = std::make_unique<MenuNavBar>();
 		}
 
@@ -129,9 +130,11 @@ namespace Envy
 		void CreateStyle();
 		void Render();
 		void Toggle() { m_visible = !m_visible; }
+		void ToggleExternal(bool val) { m_externalWindowVisible = val; }
 		bool Visible() { return m_visible; }
 	private:
 		bool m_visible;
+		bool m_externalWindowVisible;
 		ImGuiStyle m_style;
 
 		std::unique_ptr<MenuNavBar> m_pNavBar;

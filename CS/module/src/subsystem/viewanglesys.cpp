@@ -216,7 +216,7 @@ namespace Envy
 			Interfaces::Instance()->GetInterface<IVEngineClient>()->get()->SetViewAngles(usercmd->viewangles);
 		}
 	}
-	void ViewangleSubssytem::OnFrameStageNotify(
+	void ViewangleSubssytem::	OnFrameStageNotify(
 		SourceEngine::ClientFrameStage_t stage
 	)
 	{

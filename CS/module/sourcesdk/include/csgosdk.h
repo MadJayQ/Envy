@@ -43,5 +43,6 @@
 #include "Convar.h"
 #include "CUserCmd.hpp"
 #include "glowoutlineeffect.hpp"
+#include "keyvalues.hpp"
 
 #include "netvars.h"

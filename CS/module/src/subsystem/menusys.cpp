@@ -68,11 +68,8 @@ namespace Envy
 				auto cl_mouseenable = (*icvar)->FindVar("cl_mouseenable");
 				cl_mouseenable->SetValue(!m_bWindowOpen);
 			}
-			else
-			{
-				m_pMenu->Render();
-			}
 		}
+		m_pMenu->Render();
 
 	}
 	LRESULT ENVY_API MenuSubsystem::MenuMessagePump(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)

@@ -24,7 +24,7 @@ namespace Envy
 		{
 			auto ent = GetEntityByIndex(i);
 			if (!ent) continue;
-			if (!ent->IsPlayer()) continue;
+			if (ent->GetClientClass()->m_ClassID != 40) continue;
 			ret.push_back(reinterpret_cast<C_BasePlayer*>(ent));
 		}
 

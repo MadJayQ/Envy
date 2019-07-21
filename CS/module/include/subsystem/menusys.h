@@ -33,6 +33,7 @@ namespace Envy
 		LRESULT ENVY_API MenuMessagePump(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 		void OnToggleMenu();
+		void ToggleExternalWindow() { m_pMenu->ToggleExternal(true); }
 
 	private:
 		HWND m_hCSGOWindow;

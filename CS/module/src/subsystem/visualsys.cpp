@@ -1,6 +1,7 @@
 #include "..\..\include\subsystem\visualsys.h"
 #include "interfaces.h"
 #include "structs.h"
+#include "camerasys.h"
 #include <mathfuncs.h>
 
 using namespace Envy::SourceEngine;
@@ -61,6 +62,8 @@ namespace Envy
 		else if (panelId == panel)
 		{
 			m_ESP->Watermark();
+
+			//g_Subsystems->Get<CameraSubsystem>()->DrawCameraTexture();
 //#if 1
 //			if ((*engine)->IsInGame() && (*engine)->IsConnected())
 //			{
