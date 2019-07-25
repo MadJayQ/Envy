@@ -4,7 +4,11 @@
 
 #include "subsystem/inputsys.h"
 
+#include <random>
+
 using namespace Envy::SourceEngine;
+
+static float shootTime = -1.f;
 
 namespace Envy
 {
@@ -38,6 +42,8 @@ namespace Envy
 		filter.pSkip = g_LocalPlayer;
 		Ray_t ray;
 
+		float time = (*Interfaces::Instance()->GetInterface<CGlobalVarsBase>())->curtime;
+
 		ray.Init(playerPos, dst);
 
 		(*trace)->TraceRay(
@@ -48,7 +54,11 @@ namespace Envy
 		);
 
 		auto entity = gameTrace.hit_entity;
-		if (!entity) return false;
+		if (!entity)
+		{
+			shootTime = -1.f;
+			return false; //Not looking at anyone anymore
+		}
 
 		auto clientClass = entity->GetClientClass();
 		if (!clientClass) return false;
@@ -57,20 +67,56 @@ namespace Envy
 
 		C_BasePlayer* player = reinterpret_cast<C_BasePlayer*>(entity);
 
-		if (!player->IsAlive()) return false;
-		if (player->IsDormant()) return false;
-		if (player->m_iTeamNum() == g_LocalPlayer->m_iTeamNum()) return false;
+		if (!player->IsAlive() || player->IsDormant() || player->m_iTeamNum() == g_LocalPlayer->m_iTeamNum())
+		{
+			shootTime = -1.f;
+			return false;
+		}
 
 		if (gameTrace.hitgroup != HITGROUP_HEAD)
+		{
+			shootTime = -1.f;
 			return false;
-
-		if (inputSys->GetKeyState(VK_LMENU) != Envy::KeyState::Pressed) {
-			return false;
-
 		}
+
+		if (inputSys->m_keyMap[Options::Instance()->toggle_triggerbot()] != Envy::KeyState::Down) {
+			shootTime = -1.f;
+			return false;
+		}
+
 		if (!playerWeapon->CanFire()) return false;
 
 		bool canHit = true;
+
+		float delay = 0.f;
+
+		if (Options::Instance()->triggerbot_delay_random())
+		{
+			std::random_device rd;
+			std::mt19937 eng(rd());
+			std::uniform_real_distribution<> dist(
+				Options::Instance()->triggerbot_delay_min(),
+				Options::Instance()->triggerbot_delay_max()
+			);
+
+			delay = dist(eng);
+		}
+		else
+		{
+			delay = Options::Instance()->triggerbot_delay();
+		}
+
+		if (shootTime < 0)
+		{
+			shootTime = time + (delay * (float)(1 / 1000));
+		}
+		else if (shootTime > 0.f)
+		{
+			if (time < shootTime)
+			{
+				canHit = false;
+			}
+		}
 
 		if (!canHit) return false;
 

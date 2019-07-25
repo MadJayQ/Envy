@@ -12,7 +12,7 @@ constexpr static struct _VERSION_INFO
 {
 	const char* szBuildDate = __DATE__;
 	const char* szBuildTime = __TIME__;
-	const char* szVersionNumber = "Windows Alpha v1.3.1b - UNSTABLE";
+	const char* szVersionNumber = "Windows Alpha v1.4";
 	const char* szAuthor = "MadJayQ";
 	const char* szName = "Envy - CS ";
 

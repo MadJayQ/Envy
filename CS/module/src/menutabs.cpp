@@ -48,6 +48,27 @@ namespace Envy
 		{
 			g_Subsystems->Get<InputSubsystem>()->ConsumeNextKeyInput(&Options::Instance()->toggle_aimbot());
 		}
+		ImGui::Separator();
+		ImGui::Checkbox("Trigger Bot Enabled", &Options::Instance()->triggerbot_enabled());
+		ImGui::Text("Triggerbot Toggle:");
+		ImGui::SameLine();
+		sprintf(keyName, "%d", Options::Instance()->toggle_triggerbot());
+		if (ImGui::Button(keyName, ImVec2(50, 0)))
+		{
+			g_Subsystems->Get<InputSubsystem>()->ConsumeNextKeyInput(&Options::Instance()->toggle_triggerbot());
+		}
+
+		ImGui::Checkbox("Triggerbot Random Delay", &Options::Instance()->triggerbot_delay_random());
+
+		if (!Options::Instance()->triggerbot_delay_random())
+		{
+			ImGui::SliderFloat("Triggerbot Delay: ", &Options::Instance()->triggerbot_delay(), 0.f, 500.f);
+		}
+		else
+		{
+			ImGui::SliderFloat("Triggerbot Delay - Min: ", &Options::Instance()->triggerbot_delay_min(), 0.f, 500.f);
+			ImGui::SliderFloat("Triggerbot Delay - Max: ", &Options::Instance()->triggerbot_delay_max(), 0.f, 500.f);
+		}
 
 		
 	}

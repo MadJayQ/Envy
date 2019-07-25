@@ -135,13 +135,13 @@ void Envy::CameraSubsystem::OnToggleCameraState()
 	case Camera_SPECTATE: SetCameraState(Camera_MIRROR); break;
 	}
 }
-
+#pragma optimize( "", off )
 void Envy::CameraSubsystem::Init()
 {
 	auto materialSystem = Interfaces::Instance()->GetInterface<IMaterialSystem>();
-	materialSystem->ForceBeginRenderTargetAllocation();
+//	materialSystem->ForceBeginRenderTargetAllocation();
 	m_pCameraTexture = materialSystem->CreateFullFrameRenderTarget("spycam_texture");
-	materialSystem->ForceEndRenderTargetAllocation();
+	//materialSystem->ForceEndRenderTargetAllocation();
 
 	std::string materialName = "nadecam_material";
 	std::string materialData = 
@@ -169,6 +169,7 @@ void Envy::CameraSubsystem::Init()
 	inputSys->BindHotkey(VK_HOME, this, &CameraSubsystem::OnToggleCameraState);
 
 }
+#pragma optimize( "", on ) 
 
 IDirect3DTexture9* Envy::CameraSubsystem::GetRawCameraTexture()
 {

@@ -532,7 +532,8 @@ namespace Envy
 		panel_vmt->HookFunction(Index::PaintTraverse, (uintptr_t)Hooks::hkPaintTraverse);
 		surface_vmt->HookFunction(Index::LockCursor, (uintptr_t)Hooks::hkLockCursor);
 		viewrender_vmt->HookFunction(Index::RenderView, (uintptr_t)Hooks::hkRenderView);
-		//client_vmt->HookFunction(Index::CreateMove, (uintptr_t)Hooks::hkCreateMove_Proxy);
+		client_vmt->HookFunction(Index::CreateMove, (uintptr_t)Hooks::hkCreateMove_Proxy);
+		//Interfaces::Instance()->GetInterface<CInput>();
 		client_vmt->HookFunction(Index::FrameStageNotify, (uintptr_t)Hooks::hkFrameStageNotify);
 		//client_vmt->HookFunction(Index::WriteUsercmdDeltaToBuffer, (uintptr_t)Hooks::hkWriteUsercmdDeltaToBuffer);
 

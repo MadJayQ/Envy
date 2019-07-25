@@ -244,7 +244,7 @@ namespace Envy
 
 		bool C_BaseEntity::ShouldCollide(int collisionGroup, int contentsMask)
 		{
-			return VMTManager::Instance()->GetVirtualFunction<bool(__thiscall*)(C_BaseEntity*, int, int)>(this, 167)(this, collisionGroup, contentsMask);
+			return VMTManager::Instance()->GetVirtualFunction<bool(__thiscall*)(C_BaseEntity*, int, int)>(this, 170)(this, collisionGroup, contentsMask);
 		}
 
 	}

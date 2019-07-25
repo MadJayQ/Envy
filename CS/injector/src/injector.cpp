@@ -51,6 +51,8 @@ int main(int argc, char** args)
 	//);
 	p.Detach();
 
+	system("pause");
+
 	return EXIT_SUCCESS;
 }
 

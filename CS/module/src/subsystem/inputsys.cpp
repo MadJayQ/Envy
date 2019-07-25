@@ -4,7 +4,10 @@ namespace Envy
 {
 	void InputSubsystem::Init()
 	{
-
+		for (int i = 0; i < m_keyMap.size(); i++)
+		{
+			m_keyMap[i] = KeyState::None;
+		}
 	}
 	bool InputSubsystem::InputMessagePump(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	{

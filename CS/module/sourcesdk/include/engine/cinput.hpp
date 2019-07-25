@@ -28,32 +28,35 @@ namespace Envy
 
 
 			inline CVerifiedUserCmd* GetVerifiedCmd(int sequence_number);
-			void* pvftable;
+			void* pvftable;											//0x0
 
-			char				pad_0x00[0x8];
-			bool                m_fTrackIRAvailable;            //0x04
-			bool                m_fMouseInitialized;            //0x05
-			bool                m_fMouseActive;                 //0x06
-			bool                m_fJoystickAdvancedInit;        //0x07
-			char                pad_0x08[0x2C];                 //0x08
-			void*				m_pKeys;						//0x34
-			char                pad_0x38[0x6C];                 //0x38
-			bool                m_fCameraInterceptingMouse;     //0x9C
-			bool                m_fCameraInThirdPerson;         //0x9D
-			bool                m_fCameraMovingWithMouse;       //0x9E
-			Vector              m_vecCameraOffset;              //0xA0
-			bool                m_fCameraDistanceMove;          //0xAC
-			int                 m_nCameraOldX;                  //0xB0
-			int                 m_nCameraOldY;                  //0xB4
-			int                 m_nCameraX;                     //0xB8
-			int                 m_nCameraY;                     //0xBC
-			bool                m_CameraIsOrthographic;         //0xC0
-			QAngle              m_angPreviousViewAngles;        //0xC4
-			QAngle              m_angPreviousViewAnglesTilt;    //0xD0
-			float               m_flLastForwardMove;            //0xDC
-			int                 m_nClearInputState;             //0xE0
-			CUserCmd*			m_pCommands;					//0xEC
-			CVerifiedUserCmd*   m_pVerifiedCommands;            //0xF0
+			char				pad_0x04[0x8];						//0x04
+			bool                m_fTrackIRAvailable;				//0x0C
+			bool                m_fMouseInitialized;				//0x0D
+			bool                m_fMouseActive;						//0x0E
+			bool                m_fJoystickAdvancedInit;			//0x0F
+			char                pad_0x08[0x2C];						//0x10
+			void* m_pKeys;											//0x3C
+			char                pad_0x38[0x64];						//0x40
+			int                 pad_0x41;							//0xA4
+			int                 pad_0x42;							//0xA8
+			bool                m_fCameraInterceptingMouse;			//0xAC
+			bool                m_fCameraInThirdPerson;				//0xAD
+			bool                m_fCameraMovingWithMouse;			//0xAE
+			Vector              m_vecCameraOffset;					//0xAF	
+			bool                m_fCameraDistanceMove;				//0xBB
+			int                 m_nCameraOldX;						//0xBC
+			int                 m_nCameraOldY;						//0xC0
+			int                 m_nCameraX;							//0xC4
+			int                 m_nCameraY;							//0xC8
+			bool                m_CameraIsOrthographic;				//0xCC
+			Vector              m_angPreviousViewAngles;			//0xCD
+			Vector              m_angPreviousViewAnglesTilt;		//0xD9
+			float               m_flLastForwardMove;				//0xE5
+			int                 m_nClearInputState;					//0xE9
+			char                pad_0xE4[0x8];						//0xED
+			CUserCmd* m_pCommands;									//0xF5
+			CVerifiedUserCmd* m_pVerifiedCommands;					//0xF9
 		};
 	}
 
@@ -73,14 +76,15 @@ namespace Envy
 		}
 		SourceEngine::CUserCmd* CInput::GetUserCmd(int sequence_number)
 		{
-			SourceEngine::CUserCmd* usercmd = (SourceEngine::CUserCmd*)(m_data->m_pCommands) + (0x64 * sequence_number % MULTIPLAYER_BACKUP);
-			return usercmd;
+			auto commands = *(SourceEngine::CUserCmd**)((uintptr_t)m_data + 0xF4);
+			return &commands[sequence_number % MULTIPLAYER_BACKUP];
 		}
 
 		SourceEngine::CVerifiedUserCmd* CInput::GetVerifiedCmd(int sequence_number)
 		{
-			SourceEngine::CVerifiedUserCmd* usercmd = (SourceEngine::CVerifiedUserCmd*)(m_data->m_pVerifiedCommands) + (sizeof(SourceEngine::CVerifiedUserCmd) * sequence_number % MULTIPLAYER_BACKUP);
-			return usercmd;
+			auto commands = *(SourceEngine::CVerifiedUserCmd * *)((uintptr_t)m_data + 0xF8);
+			return &commands[sequence_number % MULTIPLAYER_BACKUP];
+
 		}
 
 		bool ThirdPerson()

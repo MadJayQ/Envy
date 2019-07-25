@@ -112,7 +112,7 @@ namespace Envy
 				{
 
 				}
-
+				ImGui::SameLine();
 				if (ImGui::Button("External Camera Window", ImVec2{ 150.f, 25.f }))
 				{
 					ToggleExternal(true);
@@ -127,10 +127,10 @@ namespace Envy
 				auto cameraSys = g_Subsystems->Get<CameraSubsystem>();
 				auto size = ImGui::GetWindowSize();
 				cameraSys->SetCameraExtents(size.x, size.y);
-
-				IDirect3DTexture9* texture = cameraSys->GetRawCameraTexture();
-				if (texture != NULL)
+				auto engineClient = Interfaces::Instance()->GetInterface<IVEngineClient>();
+				if ((*engineClient)->IsConnected() && (*engineClient)->IsInGame())
 				{
+					IDirect3DTexture9* texture = cameraSys->GetRawCameraTexture();
 					ImVec2 uv_min(0.f, 0.f);
 					ImVec2 uv_max(1.f, 1.f);
 

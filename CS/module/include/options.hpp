@@ -91,7 +91,15 @@ public:
 	OPTION(bool, resolver_force_lby, false);
 	OPTION(bool, resolver_last_lby, false);
 
+	OPTION(bool, triggerbot_enabled, false);
+	OPTION(float, triggerbot_delay, 0.f);
+	OPTION(bool, triggerbot_delay_random, false);
+	OPTION(float, triggerbot_delay_min, 1.f);
+	OPTION(float, triggerbot_delay_max, 500.f);
+
+
 	TOGGLEKEY(aimbot, 18);
+	TOGGLEKEY(triggerbot, 18);
 
 	std::vector<std::pair<std::string, std::vector<int>>> hitscan_map;
 

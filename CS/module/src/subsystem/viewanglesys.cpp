@@ -60,7 +60,8 @@ namespace Envy
 		if (!engine->IsInGame()) return;
 
 		m_safeAngle = usercmd->viewangles;
-		prediction->RunCommand_Rebuilt(usercmd);
+		//TODO(Jake): Reverse this function v
+		//prediction->RunCommand_Rebuilt(usercmd);
 
 		//Disable this shit for now
 
@@ -174,7 +175,7 @@ namespace Envy
 			curtime = g_LocalPlayer->GetPredictionTime();
 		}
 #endif
-		if (true)
+		if (Options::Instance()->triggerbot_enabled())
 		{
 			if (m_Triggerbot->ProcessTriggerBot(m_safeAngle, sendpacket))
 			{
@@ -209,7 +210,7 @@ namespace Envy
 
 			}
 		}
-		Interfaces::Instance()->GetInterface<CGameMovement>()->FixMovement(usercmd, m_safeAngle);
+		/*Interfaces::Instance()->GetInterface<CGameMovement>()->FixMovement(usercmd, m_safeAngle);*/
 
 		if (!Options::Instance()->aimbot_silent_aim())
 		{

@@ -32,12 +32,12 @@ namespace Envy
 
 		void ConsumeNextKeyInput(int* store);
 
+		std::array<KeyState, 256> m_keyMap;
 	private:
 		bool ProcessMouseMessage(UINT msg, WPARAM wparam, LPARAM lparam);
 		bool ProcessKeyboardMessage(UINT msg, WPARAM wparam, LPARAM lparam);
 	private:
 		std::array<std::function<void(void)>, 256> m_hotkeys;
-		std::array<KeyState, 256> m_keyMap;
 		bool m_bWaitingForKey = false;
 		int* m_pNextKey = NULL;
 
