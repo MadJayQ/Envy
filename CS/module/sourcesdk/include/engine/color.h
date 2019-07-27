@@ -41,6 +41,10 @@ namespace Envy
 			int b() const { return _CColor[2]; }
 			int a() const { return _CColor[3]; }
 
+			float rNormalized() const { return (float)(_CColor[0]) / 255.f; }
+			float gNormalized() const { return (float)(_CColor[1]) / 255.f; }
+			float bNormalized() const { return (float)(_CColor[2]) / 255.f; }
+
 			unsigned char &operator[](int index)
 			{
 				return _CColor[index];
@@ -59,6 +63,8 @@ namespace Envy
 			static Color Red;
 			static Color Green;
 			static Color Blue;
+			static Color DarkRed;
+			static Color DarkYellow;
 
 		private:
 			unsigned char _CColor[4];

@@ -9,6 +9,8 @@ namespace Envy
 		Color Color::Red(255, 0, 0, 255);
 		Color Color::Green(0, 128, 0, 255);
 		Color Color::Blue(0, 0, 255, 255);
+		Color Color::DarkRed(112, 18, 23, 255);
+		Color Color::DarkYellow(219, 209, 13, 255);
 
 		Color::Color()
 		{

@@ -32,6 +32,7 @@ namespace Envy
 	Function<void, THISCALL, _ISurface_*> oUnlockCursor(INVALID);
 	Function<void, THISCALL, _ISurface_*>oLockCursor(INVALID);
 	Function<void, THISCALL, _IViewRender_*, CViewSetup&, CViewSetup&, int, int> oRenderView(INVALID);
+	Function<void, THISCALL, _IVModelRender_*, IMatRenderContext*, void*, const ModelRenderInfo_t&, matrix3x4_t*> oDrawModelExecute(INVALID);
 
 
 
@@ -41,6 +42,7 @@ namespace Envy
 	VMT* g_pClientPredictionVMT;
 	VMT* g_pClientModeVMT;
 	VMT* viewrender_vmt;
+	VMT* modelrender_vmt;
 
 	IDirect3DDevice9* g_D3DDevice;
 	namespace Hooks 
@@ -383,6 +385,32 @@ namespace Envy
 
 			return true;
 		}
+
+		void ENVY_HOOK hkDrawModelExecute(
+			_IVModelRender_* modelRenderer,
+			int edx,
+			IMatRenderContext* context,
+			void* state,
+			const ModelRenderInfo_t& info,
+			matrix3x4_t* matrix
+		)
+		{
+			if (oDrawModelExecute == INVALID)
+			{
+				oDrawModelExecute->assign(
+					FROMVMT(modelRenderer, Index::DrawModelExecute)
+				);
+			}
+
+			auto visualSys = g_Subsystems->Get<VisualSubsystem>();
+
+			bool callOriginal = visualSys->OnDrawModelExecute(context, state, info, matrix, oDrawModelExecute);
+
+			if (callOriginal)
+			{
+				oDrawModelExecute(modelRenderer, context, state, info, matrix);
+			}
+		}
 		int ENVY_HOOK hkDoPostScreenEffects(
 			_IClientMode_ * clientmode, 
 			int edx, 
@@ -522,11 +550,13 @@ namespace Envy
 		auto clientmode = Interfaces::Instance()->GetInterface<IClientMode>();
 		auto surface = Interfaces::Instance()->GetInterface<ISurface>();
 		auto viewrender = Interfaces::Instance()->GetInterface<IViewRender>();
+		auto modelrender = Interfaces::Instance()->GetInterface<IVModelRender>();
 
 		panel_vmt = VMTManager::Instance()->CreateVMT((uintptr_t)panel->get());
 		client_vmt = VMTManager::Instance()->CreateVMT((uintptr_t)base_client->get());
 		surface_vmt = VMTManager::Instance()->CreateVMT((uintptr_t)surface->get());
 		viewrender_vmt = VMTManager::Instance()->CreateVMT((uintptr_t)viewrender->get());
+		modelrender_vmt = VMTManager::Instance()->CreateVMT((uintptr_t)modelrender->get());
 
 
 		panel_vmt->HookFunction(Index::PaintTraverse, (uintptr_t)Hooks::hkPaintTraverse);
@@ -542,6 +572,8 @@ namespace Envy
 
 		g_pClientModeVMT = VMTManager::Instance()->CreateVMT((uintptr_t)clientmode->get());
 		g_pClientModeVMT->HookFunction(Index::DoPostScreenSpaceEffects, (uintptr_t)Hooks::hkDoPostScreenEffects);
+
+		modelrender_vmt->HookFunction(Index::DrawModelExecute, (uintptr_t)Hooks::hkDrawModelExecute);
 
 		g_Subsystems->Get<CameraSubsystem>();
 	}

@@ -85,6 +85,8 @@ public:
 	OPTION(float, glow_a, 0.0);
 	OPTION(bool, glow_rwo, true);
 	OPTION(bool, glow_rwu, false);
+	OPTION(bool, glow_bloom, false);
+	OPTION(int, glow_style, 0);
 
 	OPTION(bool, misc_lag_exploit, false);
 
@@ -97,6 +99,8 @@ public:
 	OPTION(float, triggerbot_delay_min, 1.f);
 	OPTION(float, triggerbot_delay_max, 500.f);
 
+	OPTION(bool, chams_enabled, false);
+	OPTION(bool, chams_reflective, false);
 
 	TOGGLEKEY(aimbot, 18);
 	TOGGLEKEY(triggerbot, 18);

@@ -66,7 +66,7 @@ namespace Envy
 		auto visualnav = m_pNavBar->CreateNavItem("Visuals");
 		visualnav->CreateTab("ESP", DrawESPTab);
 		visualnav->CreateTab("Glow", DrawGlowTab);
-		visualnav->CreateTab("Chams", nullptr);
+		visualnav->CreateTab("Chams", DrawChamsTab);
 		visualnav->CreateTab("Misc", DrawMiscTab);
 		m_pNavBar->SetSelectedItem(0);
 		auto hvhnav = m_pNavBar->CreateNavItem("HvH");

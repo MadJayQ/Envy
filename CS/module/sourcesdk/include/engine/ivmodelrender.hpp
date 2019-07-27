@@ -103,6 +103,7 @@ namespace Envy
 		{
 			Vector                  origin;
 			QAngle                  angles;
+			void*					pad;
 			IClientRenderable*      pRenderable;
 			const model_t*          pModel;
 			const matrix3x4_t*      pModelToWorld;
@@ -237,10 +238,10 @@ namespace Envy
 		};
 	}
 
-	class _IVModelRender_ : public SourceInterface<SourceEngine::_IVModelRender_>
+	class IVModelRender : public SourceInterface<SourceEngine::_IVModelRender_>
 	{
 	public:
-		_IVModelRender_() {}
+		IVModelRender() {}
 
 		virtual Interface* Init() override
 		{
