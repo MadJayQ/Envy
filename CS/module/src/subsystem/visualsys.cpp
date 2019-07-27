@@ -121,7 +121,8 @@ namespace Envy
 			glowobject.m_flAlpha = Options::Instance()->glow_a();
 			glowobject.m_bRenderWhenOccluded = Options::Instance()->glow_rwo();
 			glowobject.m_bRenderWhenUnoccluded = Options::Instance()->glow_rwu();
-			glowobject.m_nGlowStyle = 1;
+			glowobject.m_bFullBloomRender = Options::Instance()->glow_bloom();
+			glowobject.m_nGlowStyle = Options::Instance()->glow_style();
 		}
 	}
 	bool VisualSubsystem::OnDrawModelExecute(IMatRenderContext* context, void* state, const ModelRenderInfo_t& model, matrix3x4_t* boneToWorld, Envy::oDrawModelExecuteFn oDrawModelExecute)

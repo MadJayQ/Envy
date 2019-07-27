@@ -70,7 +70,6 @@ namespace Envy
 		R"###("VertexLitGeneric"
 	{
 		"$baseTexture" 			"vgui/white"
-		"$bumpmap"				"effects\flat_normal"
 		"$ignorez"		"0"
 		"$phong" "1"
 		"$phongexponent" 5
@@ -87,7 +86,6 @@ namespace Envy
 		R"###("VertexLitGeneric"
 	{
 		"$baseTexture" 			"vgui/white"
-		"$bumpmap"				"effects\flat_normal"
 		"$ignorez"		"1"
 		"$phong" "1"
 		"$phongexponent" 5
