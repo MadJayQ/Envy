@@ -60,15 +60,21 @@ namespace Envy
 
 	void Menu::Initialize()
 	{
+		// Aimbot tab. 
 		auto aimnav = m_pNavBar->CreateNavItem("Aimbot");
 		aimnav->CreateTab("Rage", DrawRageTab);
 		aimnav->CreateTab("Legit", DrawLegitTab);
+		aimnav->CreateTab("Triggerbot", DrawTriggerbotTab);
+
+		// Visuals tab.
 		auto visualnav = m_pNavBar->CreateNavItem("Visuals");
 		visualnav->CreateTab("ESP", DrawESPTab);
 		visualnav->CreateTab("Glow", DrawGlowTab);
 		visualnav->CreateTab("Chams", nullptr);
 		visualnav->CreateTab("Misc", DrawMiscTab);
 		m_pNavBar->SetSelectedItem(0);
+
+		// HvH Tab
 		auto hvhnav = m_pNavBar->CreateNavItem("HvH");
 		hvhnav->CreateTab("Anti-Aim", DrawAntiAimTab);
 		hvhnav->CreateTab("Hitscan Editor", DrawHitscanTab);

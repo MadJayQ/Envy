@@ -22,13 +22,13 @@ namespace Envy
 		public:
 			AntiAimList(const char* family) : m_szFamily(family)
 			{
-				auto list = g_sAntiAims[family];
-				auto itr = list->begin();
+				//auto list = g_sAntiAims[family];
+				//auto itr = list->begin();
 
-				for (itr; itr != list->end(); itr++)
-				{
-					m_list.push_back(itr->first);
-				}
+				//for (itr; itr != list->end(); itr++)
+				//{
+				//	m_list.push_back(itr->first);
+				//}
 			}
 
 			AngleModifierFn operator[](int idx) { return GetAntiAim(idx); }

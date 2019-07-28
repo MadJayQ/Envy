@@ -20,17 +20,52 @@ namespace Envy
 	{
 		auto hb = HITBOX_HEAD;
 		std::string hitgroups[] = { "Head", "Chest", "Left Upper", "Left Lower", "Right Upper", "Right Lower" };
-		std::string hitboxmap[][6] = 
-		{ 
+		std::string hitboxmap[][6] =
+		{
 			{"HITBOX_HEAD", "HITBOX_NECK", "HITBOX_LOWER_NECK"},
 			{"Swag"},
 			{ "Head" },
 			{ "Swag" },
 			{ "Head" },
-			{ "Swag" } 
+			{ "Swag" }
 		};
 	}
-	void DrawRageTab() 
+
+	// Define initial vars for hitbox selector. 
+	char HitboxSelector::buf[256] = { '\0' };
+	std::vector<int> HitboxSelector::s_AllAvailableHitboxes = { ALLHITBOXES() };
+	bool HitboxSelector::s_SelectedHitbox[HITBOX_MAX] = { false };
+	bool HitboxSelector::s_SelectedHitboxAvailable[HITBOX_MAX] = { false };
+	int HitboxSelector::s_AvailableIdx = 0;
+	int HitboxSelector::s_SelectedIdx = 0;
+	int HitboxSelector::sidx = 0;
+	bool HitboxSelector::s_SelectedHitscan[32] = { false };
+	std::vector<int> HitboxSelector::s_AvailableHitboxes = std::vector<int>();
+	std::array<std::string, 20> HitboxSelector::hitboxNames =
+	{
+		"HEAD",
+		"NECK",
+		"LOWER NECK",
+		"PELVIS",
+		"STOMACH",
+		"LOWER CHEST",
+		"CHEST",
+		"UPPER CHEST",
+		"RIGHT THIGH",
+		"LEFT THIGH",
+		"RIGHT CALF",
+		"LEFT CALF",
+		"RIGHT FOOT",
+		"LEFT FOOT",
+		"RIGHT HAND",
+		"LEFT HAND",
+		"RIGHT UPPER ARM",
+		"RIGHT FOREARM",
+		"LEFT UPPER ARM",
+		"LEFT FOREARM"
+	};
+
+	void DrawRageTab()
 	{
 		ImGui::Checkbox("Enable", &Options::Instance()->aimbot_enable());
 		ImGui::Checkbox("Silent", &Options::Instance()->aimbot_silent_aim());
@@ -48,31 +83,8 @@ namespace Envy
 		{
 			g_Subsystems->Get<InputSubsystem>()->ConsumeNextKeyInput(&Options::Instance()->toggle_aimbot());
 		}
-		ImGui::Separator();
-		ImGui::Checkbox("Trigger Bot Enabled", &Options::Instance()->triggerbot_enabled());
-		ImGui::Text("Triggerbot Toggle:");
-		ImGui::SameLine();
-		sprintf(keyName, "%d", Options::Instance()->toggle_triggerbot());
-		if (ImGui::Button(keyName, ImVec2(50, 0)))
-		{
-			g_Subsystems->Get<InputSubsystem>()->ConsumeNextKeyInput(&Options::Instance()->toggle_triggerbot());
-		}
-
-		ImGui::Checkbox("Triggerbot Random Delay", &Options::Instance()->triggerbot_delay_random());
-
-		if (!Options::Instance()->triggerbot_delay_random())
-		{
-			ImGui::SliderFloat("Triggerbot Delay: ", &Options::Instance()->triggerbot_delay(), 0.f, 500.f);
-		}
-		else
-		{
-			ImGui::SliderFloat("Triggerbot Delay - Min: ", &Options::Instance()->triggerbot_delay_min(), 0.f, 500.f);
-			ImGui::SliderFloat("Triggerbot Delay - Max: ", &Options::Instance()->triggerbot_delay_max(), 0.f, 500.f);
-		}
-
-		
 	}
-	void DrawLegitTab() 
+	void DrawLegitTab()
 	{
 		ImGui::Checkbox("Aim-Lock", &Options::Instance()->aimbot_autoaim());
 		ImGui::Checkbox("Smooth", &Options::Instance()->aimbot_enable_smooth());
@@ -81,7 +93,7 @@ namespace Envy
 		ImGui::SliderInt("Smooth Factor", &Options::Instance()->smooth_factor(), 1, 10);
 
 	}
-	void DrawESPTab() 
+	void DrawESPTab()
 	{
 		ImGui::BeginGroupBox("Player Options", ImVec2{ 150.f, 350.f });
 		{
@@ -102,7 +114,7 @@ namespace Envy
 		}
 		ImGui::EndGroupBox();
 	}
-	void DrawGlowTab() 
+	void DrawGlowTab()
 	{
 		ImGui::Checkbox("Glow", &Options::Instance()->glow_enabled());
 		ImGui::SliderFloat("R", &Options::Instance()->glow_r(), 0.1, 1.f);
@@ -112,11 +124,11 @@ namespace Envy
 		ImGui::Checkbox("Render When Occluded", &Options::Instance()->glow_rwo());
 		ImGui::Checkbox("Render when Unoccluded", &Options::Instance()->glow_rwu());
 	}
-	void DrawChamsTab() 
+	void DrawChamsTab()
 	{
 
 	}
-	void DrawMiscTab() 
+	void DrawMiscTab()
 	{
 		ImGui::Checkbox("Spread Circle", &Options::Instance()->draw_spread_circle());
 		ImGui::Checkbox("Random Fuckery", &Options::Instance()->misc_lag_exploit());
@@ -137,13 +149,13 @@ namespace Envy
 		ImGui::Text("Custom Override - ");
 		ImGui::SameLine();
 		ImGui::Checkbox("Enable?", &Options::Instance()->aa_custom_override());
-		ImGui::Separator(); 
+		ImGui::Separator();
 		ImGui::SliderFloat("Fake Offset", &Options::Instance()->aa_fake_offset(), -180.f, 180.f);
 		ImGui::SliderFloat("Real Offset", &Options::Instance()->aa_real_offset(), -180.f, 180.f);
 
 		g_sActiveYaw = yaws[Options::Instance()->aa_yaw()];
 		g_sActivePitch = pitches[Options::Instance()->aa_pitch()];
-		g_sActiveFakeYaw = yaws[Options::Instance()->aa_yaw_fake()]; 
+		g_sActiveFakeYaw = yaws[Options::Instance()->aa_yaw_fake()];
 
 	}
 }

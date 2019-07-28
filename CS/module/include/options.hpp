@@ -96,7 +96,8 @@ public:
 	OPTION(bool, triggerbot_delay_random, false);
 	OPTION(float, triggerbot_delay_min, 1.f);
 	OPTION(float, triggerbot_delay_max, 500.f);
-
+	OPTION(std::vector<int>, triggerbot_hitboxes, std::vector<int>());
+	
 
 	TOGGLEKEY(aimbot, 18);
 	TOGGLEKEY(triggerbot, 18);

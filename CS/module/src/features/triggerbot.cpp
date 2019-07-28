@@ -15,8 +15,16 @@ namespace Envy
 	bool Triggerbot::ProcessTriggerBot(SourceEngine::QAngle safeAngle, bool& sendpacket)
 	{
 		//auto traceSys = g_Subsystems->Get<TraceSubsystem>();
-		auto trace = Interfaces::Instance()->GetInterface<IEngineTrace>();
 		auto inputSys = g_Subsystems->Get<InputSubsystem>();
+
+		// Check if key is down for triggerbot.
+		if (inputSys->m_keyMap[Options::Instance()->toggle_triggerbot()] != Envy::KeyState::Down) {
+			shootTime = -1.f;
+			return false;
+		}
+
+		// Get trace subsystem. 
+		auto trace = Interfaces::Instance()->GetInterface<IEngineTrace>();
 
 		auto playerPos = g_LocalPlayer->GetEyePos();
 		auto playerWeapon = g_LocalPlayer->m_hActiveWeapon().Get();
@@ -67,7 +75,18 @@ namespace Envy
 
 		C_BasePlayer* player = reinterpret_cast<C_BasePlayer*>(entity);
 
+
 		if (!player->IsAlive() || player->IsDormant() || player->m_iTeamNum() == g_LocalPlayer->m_iTeamNum())
+		{
+			shootTime = -1.f;
+			return false;
+		}
+
+		// Verify the hitbox.
+		auto selectedHitboxes = &Options::Instance()->triggerbot_hitboxes();
+
+		// Check if a selected hitbox.
+		if (std::find(selectedHitboxes->begin(), selectedHitboxes->end(), gameTrace.hitbox) == selectedHitboxes->end())
 		{
 			shootTime = -1.f;
 			return false;
@@ -75,13 +94,8 @@ namespace Envy
 
 		if (gameTrace.hitgroup != HITGROUP_HEAD)
 		{
-			shootTime = -1.f;
-			return false;
-		}
-
-		if (inputSys->m_keyMap[Options::Instance()->toggle_triggerbot()] != Envy::KeyState::Down) {
-			shootTime = -1.f;
-			return false;
+			//shootTime = -1.f;
+			//return false;
 		}
 
 		if (!playerWeapon->CanFire()) return false;

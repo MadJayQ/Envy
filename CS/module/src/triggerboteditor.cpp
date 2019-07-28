@@ -3,17 +3,51 @@
 #include "options.hpp"
 #include "imgui.h"
 #include "csgosdk.h"
+#include "inputsys.h"
 
 namespace Envy
 {
-	void DrawHitscanTab()
+	void DrawTriggerbotTab()
 	{
+
+		char keyName[256];
+
+		ImGui::Checkbox("Trigger Bot Enabled", &Options::Instance()->triggerbot_enabled());
+
+		ImGui::Text("Triggerbot Toggle:");
+
+		ImGui::SameLine();
+
+		sprintf(keyName, "%d", Options::Instance()->toggle_triggerbot());
+
+		if (ImGui::Button(keyName, ImVec2(50, 0)))
+		{
+			g_Subsystems->Get<InputSubsystem>()->ConsumeNextKeyInput(&Options::Instance()->toggle_triggerbot());
+		}
+
+		ImGui::Checkbox("Triggerbot Random Delay", &Options::Instance()->triggerbot_delay_random());
+
+		if (!Options::Instance()->triggerbot_delay_random())
+		{
+			ImGui::SliderFloat("Triggerbot Delay: ", &Options::Instance()->triggerbot_delay(), 0.f, 500.f);
+		}
+		else
+		{
+			ImGui::SliderFloat("Triggerbot Delay - Min: ", &Options::Instance()->triggerbot_delay_min(), 0.f, 500.f);
+			ImGui::SliderFloat("Triggerbot Delay - Max: ", &Options::Instance()->triggerbot_delay_max(), 0.f, 500.f);
+		}
+
+		ImGui::Separator();
+
+		/*
+			Hitbox selector.
+		*/
 		auto hsvector = &Options::Instance()->hitscan_map;
 		HitboxSelector::s_AvailableHitboxes.clear();
 		ImGui::BeginGroup();
 		{
 			ImGui::Text("Presets");
-			ImGui::ListBoxHeader("##Presets", ImVec2{ 150.f, 300.f});
+			ImGui::ListBoxHeader("##Presets", ImVec2{ 150.f, 300.f });
 			{
 				int idx = 0;
 				for (auto preset : *hsvector)
@@ -128,6 +162,9 @@ namespace Envy
 				HitboxSelector::s_SelectedHitbox[idx] = (HitboxSelector::s_SelectedIdx == idx);
 				idx++;
 			}
+
+			// Update selection
+			Options::Instance()->triggerbot_hitboxes() = *entry;
 		}
 		ImGui::EndGroupBox();
 		ImGui::BeginGroupBox("Controls", ImVec2{ 500.f, 50.f });
