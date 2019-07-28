@@ -43,6 +43,8 @@ namespace Envy
 		virtual void Init() override;
 
 		IDirect3DTexture9* GetRawCameraTexture();
+		
+		SourceEngine::IMaterial* GetCameraMaterial() { return m_pCameraMaterial; }
 	private:
 
 		int m_CameraWidth;
@@ -53,6 +55,7 @@ namespace Envy
 
 		SourceEngine::ITexture* m_pCameraTexture;
 		SourceEngine::IMaterial* m_pCameraMaterial;
+		SourceEngine::IMaterial* m_pCameraShaderMaterial;
 		SourceEngine::C_BasePlayer* m_CurrentSpectate;
 	};
 }

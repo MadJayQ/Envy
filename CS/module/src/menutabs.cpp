@@ -123,10 +123,13 @@ namespace Envy
 		ImGui::SliderFloat("A", &Options::Instance()->glow_a(), 0.1, 1.f);
 		ImGui::Checkbox("Render When Occluded", &Options::Instance()->glow_rwo());
 		ImGui::Checkbox("Render when Unoccluded", &Options::Instance()->glow_rwu());
+		ImGui::Checkbox("Bloom", &Options::Instance()->glow_bloom());
+		ImGui::SliderInt("Style", &Options::Instance()->glow_style(), 0, 4);
 	}
 	void DrawChamsTab()
 	{
-
+		ImGui::Checkbox("Chams Enabled", &Options::Instance()->chams_enabled());
+		ImGui::Checkbox("Reflective", &Options::Instance()->chams_reflective());
 	}
 	void DrawMiscTab()
 	{

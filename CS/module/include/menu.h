@@ -132,6 +132,7 @@ namespace Envy
 		void Toggle() { m_visible = !m_visible; }
 		void ToggleExternal(bool val) { m_externalWindowVisible = val; }
 		bool Visible() { return m_visible; }
+		bool ExternalVisible() { return m_externalWindowVisible; }
 	private:
 		bool m_visible;
 		bool m_externalWindowVisible;
